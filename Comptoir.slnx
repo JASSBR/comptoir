@@ -2,8 +2,11 @@
   <Folder Name="/src/">
     <Project Path="src/Comptoir.DbMigrator/Comptoir.DbMigrator.csproj" />
     <Project Path="src/Comptoir.Domain/Comptoir.Domain.csproj" />
+    <Project Path="src/Comptoir.Api/Comptoir.Api.csproj" />
+    <Project Path="src/Comptoir.ServiceDefaults/Comptoir.ServiceDefaults.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Comptoir.Api.Tests/Comptoir.Api.Tests.csproj" />
     <Project Path="tests/Comptoir.DifferentialTests/Comptoir.DifferentialTests.csproj" />
   </Folder>
 </Solution>
