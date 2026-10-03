@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    # The legacy is frozen on purpose while it is being replaced: it only receives security fixes, by hand.
+    exclude-paths: ["legacy/**"]
+    schedule: { interval: weekly }
+    groups:
+      aspire: { patterns: ["Aspire.*"] }
+      efcore: { patterns: ["Microsoft.EntityFrameworkCore*", "Microsoft.Data.SqlClient"] }
+      testing: { patterns: ["xunit*", "Testcontainers*", "Microsoft.Testing.*", "Shouldly", "CsCheck"] }
+      opentelemetry: { patterns: ["OpenTelemetry*"] }
+  - package-ecosystem: npm
+    directory: /web
+    schedule: { interval: weekly }
+    ignore:
+      # Angular pins the TypeScript range it supports; a TypeScript major lands with the matching Angular major.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+    groups:
+      angular: { patterns: ["@angular/*", "@angular-devkit/*", "angular-eslint", "typescript"] }
+  - package-ecosystem: docker
+    directory: /
+    schedule: { interval: monthly }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
