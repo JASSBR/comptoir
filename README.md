@@ -20,12 +20,12 @@ differential tests and every switch backed by shadow traffic.
 
 <table>
   <tr>
+    <td width="50%"><img src="docs/images/quote.png" alt="Express quote as a delivery slip"></td>
     <td width="50%"><img src="docs/images/legacy-orders.png" alt="The 2014 AngularJS screens, still in use, served through the facade"></td>
-    <td width="50%"><img src="docs/images/quote.png" alt="New express quote, priced by the ported rules"></td>
   </tr>
   <tr>
-    <td align="center"><sub>The 2014 screens, unchanged, now partly answered by .NET 10</sub></td>
     <td align="center"><sub>New: an express quote the legacy could not do</sub></td>
+    <td align="center"><sub>The 2014 screens, unchanged, now partly answered by .NET 10</sub></td>
   </tr>
 </table>
 
