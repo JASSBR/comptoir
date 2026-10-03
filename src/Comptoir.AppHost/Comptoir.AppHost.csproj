@@ -1,0 +1,14 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.0">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AspireUseCliBundle>true</AspireUseCliBundle>
+    <UserSecretsId>comptoir-apphost</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Comptoir.Api\Comptoir.Api.csproj" />
+    <ProjectReference Include="..\Comptoir.Facade\Comptoir.Facade.csproj" />
+  </ItemGroup>
+</Project>

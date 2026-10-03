@@ -1,0 +1,133 @@
+:host {
+  display: grid;
+  gap: 1.25rem;
+  --mode-new: var(--success);
+  --mode-shadow: var(--status-review);
+  --mode-legacy: var(--muted);
+}
+.page-header {
+  margin-bottom: 0;
+}
+[data-mode='New'] {
+  --mode: var(--mode-new);
+}
+[data-mode='Shadow'] {
+  --mode: var(--mode-shadow);
+}
+[data-mode='Legacy'] {
+  --mode: var(--mode-legacy);
+}
+.dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--mode);
+  margin-right: 0.4rem;
+}
+
+.progress-card {
+  display: grid;
+  gap: 1rem;
+}
+.figures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+.figures > div {
+  display: grid;
+}
+.big {
+  font-size: clamp(2.2rem, 5vw, 3rem);
+  letter-spacing: -0.03em;
+  color: var(--accent);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.88rem;
+}
+.bar {
+  display: flex;
+  height: 0.8rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.bar span {
+  background: var(--mode);
+  transition: flex-grow 0.4s ease;
+}
+
+.table-card {
+  padding: 0;
+}
+.table-wrap {
+  overflow-x: auto;
+}
+code {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.mode {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--mode);
+  background: color-mix(in srgb, var(--mode) 12%, transparent);
+}
+.warn {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.comparison {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--border);
+}
+.comparison:first-of-type {
+  border-top: 0;
+}
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.outcome {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+[data-outcome='Mismatch'] .outcome {
+  color: var(--status-review);
+  background: color-mix(in srgb, var(--status-review) 12%, transparent);
+}
+[data-outcome='Error'] .outcome {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+.timing {
+  font-size: 0.78rem;
+  margin-left: auto;
+}
+.difference {
+  margin: 0.3rem 0 0 0.5rem;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--status-review);
+}

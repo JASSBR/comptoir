@@ -1,0 +1,62 @@
+.filters {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.chips button {
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.chips button.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+.product {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+}
+.sku {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+.family {
+  font-size: 0.8rem;
+}
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 0.5rem;
+}
+.price {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.stock {
+  font-size: 0.8rem;
+  color: var(--success);
+  font-weight: 600;
+}
+.stock.low {
+  color: var(--danger);
+}

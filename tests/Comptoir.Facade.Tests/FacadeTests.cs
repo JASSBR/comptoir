@@ -76,6 +76,7 @@ public sealed class FacadeTests : IAsyncLifetime
         status.GetProperty("mismatches").GetInt32().ShouldBe(1);
 
         var recent = (await client.GetFromJsonAsync<JsonElement>("/migration/status", TestContext.Current.CancellationToken)).GetProperty("recent")[0];
+        recent.GetProperty("outcome").GetString().ShouldBe("Mismatch");
         recent.GetProperty("differences")[0].GetString().ShouldBe("$[0].available: legacy 238, new 237");
     }
 

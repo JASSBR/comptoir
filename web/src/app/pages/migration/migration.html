@@ -1,0 +1,107 @@
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Strangler fig · route par route</span>
+    <h1>Migration de la gestion commerciale</h1>
+    <p class="muted">
+      Une façade YARP reçoit tout le trafic. Chaque route est servie par l'application de 2014, par
+      la nouvelle, ou par l'ancienne avec la nouvelle vérifiée dans son ombre — un changement de
+      configuration, sans redéploiement.
+    </p>
+  </div>
+</header>
+
+<section class="card progress-card">
+  <div class="figures">
+    <div>
+      <strong class="big">{{ progress() | percent }}</strong>
+      <span class="muted">des fonctions migrées</span>
+    </div>
+    <ul class="legend">
+      <li data-mode="New"><span class="dot"></span>{{ counts().migrated }} migrées</li>
+      <li data-mode="Shadow"><span class="dot"></span>{{ counts().shadow }} en vérification</li>
+      <li data-mode="Legacy"><span class="dot"></span>{{ counts().legacy }} encore en 2014</li>
+    </ul>
+  </div>
+  <div class="bar" role="img" [attr.aria-label]="(progress() | percent) + ' migré'">
+    <span data-mode="New" [style.flex-grow]="counts().migrated"></span>
+    <span data-mode="Shadow" [style.flex-grow]="counts().shadow"></span>
+    <span data-mode="Legacy" [style.flex-grow]="counts().legacy"></span>
+  </div>
+</section>
+
+@if (status.error()) {
+  <p class="alert" role="alert">La façade ne répond pas.</p>
+}
+
+<section class="card table-card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fonction</th>
+          <th>Route</th>
+          <th>Servie par</th>
+          <th class="num">Comparaisons</th>
+          <th class="num">Identiques</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (route of routes(); track route.id) {
+          <tr [attr.data-route]="route.id">
+            <td>{{ route.label }}</td>
+            <td>
+              <code>{{ route.methods.join(', ') }} {{ route.path }}</code>
+            </td>
+            <td>
+              <span class="mode" [attr.data-mode]="route.mode"
+                ><span class="dot"></span>{{ modeLabels[route.mode] }}</span
+              >
+            </td>
+            <td class="num">{{ route.shadow.total || '—' }}</td>
+            <td class="num">
+              @if (agreement(route.shadow.matches, route.shadow.total); as rate) {
+                <span [class.warn]="rate < 1">{{ rate | percent: '1.0-1' }}</span>
+              } @else {
+                <span class="muted">—</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-title">
+    <h2><app-icon name="activity" [size]="18" /> Dernières comparaisons en ombre</h2>
+    <span class="chip">actualisé toutes les 5 s</span>
+  </div>
+  @for (item of status.value()?.recent ?? []; track $index) {
+    <div class="comparison" [attr.data-outcome]="item.outcome">
+      <div class="line">
+        <span class="outcome">{{
+          item.outcome === 'Match'
+            ? 'Identique'
+            : item.outcome === 'Mismatch'
+              ? 'Différence'
+              : 'Erreur'
+        }}</span>
+        <code>{{ item.method }} {{ item.path }}</code>
+        <span class="muted timing">
+          2014 : {{ item.legacyMs | number: '1.0-0' }} ms · nouvelle :
+          {{ item.newMs | number: '1.0-0' }} ms ·
+          {{ item.at | date: 'HH:mm:ss' }}
+        </span>
+      </div>
+      @for (difference of item.differences; track $index) {
+        <p class="difference">{{ difference }}</p>
+      }
+    </div>
+  } @empty {
+    <p class="muted">
+      Aucune comparaison pour l'instant. Ouvrez la liste ou une fiche de commande dans l'interface
+      historique : la façade la rejoue sur la nouvelle application et compare les réponses.
+    </p>
+  }
+</section>

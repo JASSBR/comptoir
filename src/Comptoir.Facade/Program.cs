@@ -1,4 +1,4 @@
-using System.Net;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Comptoir.Facade;
 using Microsoft.Extensions.Options;
@@ -11,6 +11,7 @@ var legacyUrl = builder.Configuration["Legacy:BaseUrl"] ?? throw new InvalidOper
 var apiUrl = builder.Configuration["Api:BaseUrl"] ?? throw new InvalidOperationException("Api:BaseUrl is missing.");
 builder.Services.Configure<MigrationOptions>(builder.Configuration.GetSection(MigrationOptions.Section));
 builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<LegacySession>();
 builder.Services.AddSingleton<FacadeTokens>();
@@ -24,22 +25,29 @@ builder.Services.AddHttpClient(ShadowWorker.HttpClientName, client => client.Bas
     .AddServiceDiscovery();
 
 var plan = builder.Configuration.GetSection(MigrationOptions.Section).Get<MigrationOptions>() ?? new MigrationOptions();
-builder.Services.AddReverseProxy()
-    .LoadFromMemory(
-        [.. plan.Routes.Select(route => new RouteConfig
-        {
-            RouteId = route.Id,
-            Order = route.Order,
-            ClusterId = route.Mode == RouteMode.New ? "api" : "legacy",
-            Match = new RouteMatch { Path = route.Path, Methods = route.Methods },
-            Metadata = new Dictionary<string, string>(StringComparer.Ordinal) { [ProxyPipeline.ModeMetadata] = route.Mode.ToString() },
-        })],
-        [
-            // The legacy is an App Service: it routes on the Host header, so requests carry its own host name.
-            new ClusterConfig { ClusterId = "legacy", Destinations = new Dictionary<string, DestinationConfig>(StringComparer.Ordinal) { ["legacy"] = new() { Address = legacyUrl } } },
-            new ClusterConfig { ClusterId = "api", Destinations = new Dictionary<string, DestinationConfig>(StringComparer.Ordinal) { ["api"] = new() { Address = apiUrl } } },
-        ])
-    .AddServiceDiscoveryDestinationResolver();
+var routes = plan.Routes.Select(route => new RouteConfig
+{
+    RouteId = route.Id,
+    Order = route.Order,
+    ClusterId = route.Mode == RouteMode.New ? "api" : "legacy",
+    Match = new RouteMatch { Path = route.Path, Methods = route.Methods },
+    Metadata = new Dictionary<string, string>(StringComparer.Ordinal) { [ProxyPipeline.ModeMetadata] = route.Mode.ToString() },
+}).ToList();
+var clusters = new List<ClusterConfig>
+{
+    // The legacy is an App Service: it routes on the Host header, so requests carry its own host name.
+    new() { ClusterId = "legacy", Destinations = new Dictionary<string, DestinationConfig>(StringComparer.Ordinal) { ["legacy"] = new() { Address = legacyUrl } } },
+    new() { ClusterId = "api", Destinations = new Dictionary<string, DestinationConfig>(StringComparer.Ordinal) { ["api"] = new() { Address = apiUrl } } },
+};
+
+// Development: /app goes to the Angular dev server (live reload) instead of the built files, behind the same origin.
+if (builder.Configuration["Web:DevServerUrl"] is { Length: > 0 } devServer)
+{
+    routes.Add(new RouteConfig { RouteId = "web-dev", Order = 0, ClusterId = "web", Match = new RouteMatch { Path = "/app/{**rest}" } });
+    clusters.Add(new ClusterConfig { ClusterId = "web", Destinations = new Dictionary<string, DestinationConfig>(StringComparer.Ordinal) { ["web"] = new() { Address = devServer } } });
+}
+
+builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters).AddServiceDiscoveryDestinationResolver();
 
 builder.Services.AddRateLimiter(options =>
 {

@@ -1,0 +1,67 @@
+<div class="layout">
+  <aside class="sidebar">
+    <a routerLink="/migration" class="brand" aria-label="Comptoir Durand">
+      <span class="logo" aria-hidden="true"></span>
+      <span>Comptoir</span>
+    </a>
+
+    <nav aria-label="Navigation principale">
+      <p class="nav-label">Migration</p>
+      <a routerLink="/migration" routerLinkActive="active"
+        ><app-icon name="activity" /> <span>Tableau de bord</span></a
+      >
+      <p class="nav-label">Nouveaux écrans</p>
+      <a routerLink="/devis" routerLinkActive="active"
+        ><app-icon name="euro" /> <span>Devis express</span></a
+      >
+      <a routerLink="/catalogue" routerLinkActive="active"
+        ><app-icon name="folder" /> <span>Catalogue</span></a
+      >
+      <p class="nav-label">Application 2014</p>
+      <a href="/"><app-icon name="external" /> <span>Interface historique</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a [href]="repositoryUrl" target="_blank" rel="noopener"
+        ><app-icon name="github" /> <span>Code source</span></a
+      >
+      <a [href]="repositoryUrl + '/tree/main/docs/adr'" target="_blank" rel="noopener"
+        ><app-icon name="file" /> <span>Décisions d'architecture</span></a
+      >
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="live on" role="status">
+        <span class="pulse" aria-hidden="true"></span>
+        <span>Même session que l'application historique</span>
+      </span>
+      <div class="actions">
+        <button
+          type="button"
+          class="icon-button"
+          (click)="theme.toggle()"
+          aria-label="Changer de thème"
+        >
+          <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
+        </button>
+        @if (session.user(); as user) {
+          <div class="user">
+            <app-avatar [name]="user.displayName" [size]="34" />
+            <span class="who">
+              <strong>{{ user.displayName }}</strong>
+              <small>{{ user.role }}</small>
+            </span>
+          </div>
+        } @else if (session.checked()) {
+          <a class="button primary sm" [href]="loginUrl">Se connecter</a>
+        }
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

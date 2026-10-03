@@ -3,6 +3,7 @@
     <Project Path="src/Comptoir.DbMigrator/Comptoir.DbMigrator.csproj" />
     <Project Path="src/Comptoir.Domain/Comptoir.Domain.csproj" />
     <Project Path="src/Comptoir.Api/Comptoir.Api.csproj" />
+    <Project Path="src/Comptoir.AppHost/Comptoir.AppHost.csproj" />
     <Project Path="src/Comptoir.Facade/Comptoir.Facade.csproj" />
     <Project Path="src/Comptoir.ServiceDefaults/Comptoir.ServiceDefaults.csproj" />
   </Folder>

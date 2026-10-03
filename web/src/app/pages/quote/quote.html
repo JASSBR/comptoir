@@ -1,0 +1,149 @@
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Nouveau · impossible dans l'application de 2014</span>
+    <h1>Devis express</h1>
+    <p class="muted">
+      Le tarif se recalcule à chaque saisie avec les règles portées en .NET 10 — prouvées identiques
+      à la procédure stockée historique par des tests différentiels.
+    </p>
+  </div>
+</header>
+
+<div class="layout">
+  <section class="card editor">
+    <label>
+      <span>Client</span>
+      <select (change)="setCustomer($any($event.target).value)" data-field="customer">
+        <option value="">Choisir un client…</option>
+        @for (customer of customers.value(); track customer.id) {
+          <option [value]="customer.id">{{ customer.name }} — remise {{ customer.tier }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="lines">
+      @for (line of lines(); track line.key) {
+        <div class="line" [class.short]="isShort(line.productId)">
+          <select
+            (change)="setProduct(line.key, $any($event.target).value)"
+            aria-label="Article"
+            data-field="product"
+          >
+            <option value="">Article…</option>
+            @for (product of products.value(); track product.id) {
+              <option [value]="product.id" [selected]="product.id === line.productId">
+                {{ product.sku }} — {{ product.label }}
+              </option>
+            }
+          </select>
+          <input
+            type="number"
+            min="1"
+            [value]="line.quantity"
+            (input)="setQuantity(line.key, $any($event.target).value)"
+            aria-label="Quantité"
+            data-field="quantity"
+          />
+          <button
+            type="button"
+            class="button ghost sm"
+            (click)="removeLine(line.key)"
+            aria-label="Retirer la ligne"
+          >
+            <app-icon name="x" [size]="16" />
+          </button>
+        </div>
+      }
+    </div>
+    <button type="button" class="button sm" (click)="addLine()">
+      <app-icon name="plus" [size]="16" /> Ligne
+    </button>
+
+    <aside class="rules muted">
+      Remise A 10 %, B 5 % · +3 % à partir de 100 unités sur une ligne · plafond 12 % · franco de
+      port à 300 € HT, sinon 15 € HT · TVA arrondie ligne par ligne.
+    </aside>
+  </section>
+
+  <section class="card result" aria-live="polite">
+    @if (quote.value(); as q) {
+      <div class="card-title">
+        <h2>{{ q.customer.name }}</h2>
+        <span class="chip">remise {{ q.customer.tier }} · {{ q.customer.tierDiscountPct }} %</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Article</th>
+            <th class="num">Qté</th>
+            <th class="num">Remise</th>
+            <th class="num">Total HT</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of q.lines; track $index) {
+            <tr>
+              <td>
+                {{ line.label }}
+                @if (line.volumeDiscount) {
+                  <span class="chip volume">volume</span>
+                }
+                @if (q.outOfStock.includes(line.productId)) {
+                  <span class="chip stock">stock insuffisant</span>
+                }
+              </td>
+              <td class="num">{{ line.quantity }}</td>
+              <td class="num">{{ line.discountPct | number: '1.0-2' }} %</td>
+              <td class="num amount">{{ line.lineHT | currency }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="shipping">
+        @if (q.shippingHT > 0) {
+          <span
+            >Plus que <strong>{{ q.missingForFreeShipping | currency }}</strong> pour le franco de
+            port</span
+          >
+        } @else {
+          <span><app-icon name="check" [size]="16" /> Franco de port</span>
+        }
+        <div class="meter"><span [style.width.%]="freeShippingProgress() * 100"></span></div>
+      </div>
+
+      <dl class="totals">
+        <dt>Total HT</dt>
+        <dd class="amount">{{ q.totalHT | currency }}</dd>
+        <dt>Port HT</dt>
+        <dd class="amount">{{ q.shippingHT | currency }}</dd>
+        <dt>TVA</dt>
+        <dd class="amount">{{ q.totalVAT | currency }}</dd>
+        <dt class="ttc">Total TTC</dt>
+        <dd class="amount ttc" data-field="total">{{ q.totalTTC | currency }}</dd>
+      </dl>
+
+      @if (createdId(); as id) {
+        <a class="button success" [href]="'/#!/commandes/' + id">
+          <app-icon name="external" [size]="16" /> Ouvrir le brouillon n° {{ id }} dans l'interface
+          historique
+        </a>
+      } @else {
+        <button
+          type="button"
+          class="button primary"
+          [disabled]="creating() || q.outOfStock.length > 0"
+          (click)="createDraft()"
+        >
+          Créer le brouillon
+        </button>
+      }
+    } @else if (quote.isLoading()) {
+      <div class="skeleton" style="height: 14rem"></div>
+    } @else {
+      <p class="muted empty">
+        Choisissez un client et au moins un article : le devis apparaît ici.
+      </p>
+    }
+  </section>
+</div>

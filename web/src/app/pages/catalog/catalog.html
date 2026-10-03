@@ -1,0 +1,47 @@
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Servi par la nouvelle application</span>
+    <h1>Catalogue</h1>
+    <p class="muted">
+      Même route <code>/api/products</code> que l'écran de 2014 : la façade l'envoie déjà au .NET
+      10.
+    </p>
+  </div>
+</header>
+
+<div class="filters">
+  <input
+    type="search"
+    placeholder="Rechercher un article ou une référence…"
+    [value]="search()"
+    (input)="search.set($any($event.target).value)"
+  />
+  <div class="chips" role="group" aria-label="Familles">
+    <button type="button" [class.active]="!category()" (click)="category.set('')">Toutes</button>
+    @for (c of categories(); track c) {
+      <button type="button" [class.active]="category() === c" (click)="category.set(c)">
+        {{ c }}
+      </button>
+    }
+  </div>
+</div>
+
+<section class="grid">
+  @for (product of visible(); track product.id) {
+    <article class="card product">
+      <span class="sku">{{ product.sku }}</span>
+      <strong>{{ product.label }}</strong>
+      <span class="muted family">{{ product.category }} · TVA {{ product.vatRate }} %</span>
+      <div class="foot">
+        <span class="amount price">{{ product.unitPrice | currency }} <small>HT</small></span>
+        <span class="stock" [class.low]="product.available < lowStock"
+          >{{ product.available }} dispo.</span
+        >
+      </div>
+    </article>
+  } @empty {
+    @if (!products.isLoading()) {
+      <p class="muted">Aucun article.</p>
+    }
+  }
+</section>
