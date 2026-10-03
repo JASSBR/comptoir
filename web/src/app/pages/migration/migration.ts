@@ -1,20 +1,27 @@
-import { DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
-import { MigrationStatus, RouteMode } from '../../models';
-import { Icon } from '../../shared/icon';
+import { MigrationRoute, MigrationStatus, RouteMode } from '../../models';
+import { LoadState } from '../../shared/load-state';
 
 const REFRESH_MS = 5_000;
 
 export const MODE_LABELS: Readonly<Record<RouteMode, string>> = {
-  Legacy: 'Application 2014',
-  Shadow: 'En vérification',
-  New: 'Migrée',
+  Legacy: '2014',
+  Shadow: 'En contrôle',
+  New: 'Migré',
 };
+
+interface Copy {
+  readonly mode: RouteMode;
+  readonly title: string;
+  readonly caption: string;
+  readonly routes: readonly MigrationRoute[];
+}
 
 @Component({
   selector: 'app-migration',
-  imports: [DatePipe, DecimalPipe, PercentPipe, Icon],
+  imports: [DatePipe, DecimalPipe, LoadState],
   templateUrl: './migration.html',
   styleUrl: './migration.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,18 +33,31 @@ export class Migration {
   protected readonly routes = computed(
     () => this.status.value()?.routes.filter((route) => route.id !== 'legacy') ?? [],
   );
-  protected readonly counts = computed(() => {
+
+  // The three copies of the order pad: what each application holds today.
+  protected readonly copies = computed<Copy[]>(() => {
     const routes = this.routes();
-    return {
-      total: routes.length,
-      migrated: routes.filter((route) => route.mode === 'New').length,
-      shadow: routes.filter((route) => route.mode === 'Shadow').length,
-      legacy: routes.filter((route) => route.mode === 'Legacy').length,
-    };
-  });
-  protected readonly progress = computed(() => {
-    const { total, migrated } = this.counts();
-    return total === 0 ? 0 : migrated / total;
+    const of = (mode: RouteMode) => routes.filter((route) => route.mode === mode);
+    return [
+      {
+        mode: 'New',
+        title: 'Nouvelle application',
+        caption: '.NET 10 répond seul',
+        routes: of('New'),
+      },
+      {
+        mode: 'Shadow',
+        title: 'En contrôle',
+        caption: '2014 répond, .NET 10 est comparé',
+        routes: of('Shadow'),
+      },
+      {
+        mode: 'Legacy',
+        title: 'Encore en 2014',
+        caption: 'pas encore migré',
+        routes: of('Legacy'),
+      },
+    ];
   });
 
   constructor() {
@@ -46,7 +66,8 @@ export class Migration {
     inject(DestroyRef).onDestroy(() => clearInterval(timer));
   }
 
-  protected agreement(matches: number, total: number): number | null {
-    return total === 0 ? null : matches / total;
+  protected agreement(route: MigrationRoute): string {
+    const { total, matches } = route.shadow;
+    return total === 0 ? '' : `${matches} sur ${total} identiques`;
   }
 }

@@ -1,13 +1,14 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { Product } from '../../models';
+import { LoadState } from '../../shared/load-state';
 
 const LOW_STOCK = 20;
 
 @Component({
   selector: 'app-catalog',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, DecimalPipe, LoadState],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,23 +18,24 @@ export class Catalog {
     defaultValue: [],
   });
   protected readonly search = signal('');
-  protected readonly category = signal('');
   protected readonly lowStock = LOW_STOCK;
 
-  protected readonly categories = computed(() => [
-    ...new Set(this.products.value().map((p) => p.category)),
-  ]);
-  protected readonly visible = computed(() => {
+  /** The price list, by family, as the sales team prints it. */
+  protected readonly families = computed(() => {
     const search = this.search().trim().toLowerCase();
-    const category = this.category();
-    return this.products
+    const matching = this.products
       .value()
       .filter(
         (p) =>
-          (!category || p.category === category) &&
-          (!search ||
-            p.label.toLowerCase().includes(search) ||
-            p.sku.toLowerCase().includes(search)),
+          !search || p.label.toLowerCase().includes(search) || p.sku.toLowerCase().includes(search),
       );
+    const families = new Map<string, Product[]>();
+    for (const product of matching) {
+      families.set(product.category, [...(families.get(product.category) ?? []), product]);
+    }
+    return [...families].map(([name, products]) => ({ name, products }));
   });
+  protected readonly lowCount = computed(
+    () => this.products.value().filter((p) => p.available < LOW_STOCK).length,
+  );
 }

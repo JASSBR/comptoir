@@ -58,7 +58,7 @@ describe('QuoteBuilder', () => {
   it('asks for nothing until a customer and an item are chosen', async () => {
     const { element } = await render();
     http.expectNone('/api/v2/quotes');
-    expect(element.querySelector('.empty')).not.toBeNull();
+    expect(element.querySelector('.blank')).not.toBeNull();
   });
 
   it('prices the order through the new domain as it is typed', async () => {
@@ -76,9 +76,9 @@ describe('QuoteBuilder', () => {
     request.flush(quote());
     await fixture.whenStable();
 
-    expect(element.querySelector('.chip.volume')).not.toBeNull();
+    expect(element.querySelector('.tag')!.textContent).toContain('remise volume');
     expect(element.querySelector('[data-field=total]')!.textContent).toContain('2');
-    expect(element.textContent).toContain('Franco de port');
+    expect(element.querySelector('.stamp.franco')).not.toBeNull();
   });
 
   it('shows how much is missing for free shipping, and blocks a quote that cannot be served', async () => {
@@ -92,7 +92,7 @@ describe('QuoteBuilder', () => {
     await fixture.whenStable();
 
     expect(element.querySelector('.shipping')!.textContent).toContain('42,50');
-    expect(element.querySelector('.chip.stock')).not.toBeNull();
+    expect(element.querySelector('.tag.short')).not.toBeNull();
     expect(element.querySelector<HTMLButtonElement>('button.primary')!.disabled).toBe(true);
   });
 
@@ -110,7 +110,7 @@ describe('QuoteBuilder', () => {
     await settle();
     fixture.detectChanges();
 
-    expect(element.querySelector<HTMLAnchorElement>('a.success')!.getAttribute('href')).toBe(
+    expect(element.querySelector<HTMLAnchorElement>('a.primary')!.getAttribute('href')).toBe(
       '/#!/commandes/41',
     );
     expect(TestBed.inject(ToastService).toasts()[0].tone).toBe('success');
@@ -118,13 +118,13 @@ describe('QuoteBuilder', () => {
 
   it('adds and removes lines', async () => {
     const { element, fixture } = await render();
-    element.querySelector<HTMLButtonElement>('.editor > button')!.click();
+    element.querySelector<HTMLButtonElement>('.add')!.click();
     fixture.detectChanges();
-    expect(element.querySelectorAll('.line')).toHaveLength(2);
+    expect(element.querySelectorAll('.line:not(.head)')).toHaveLength(2);
 
-    element.querySelector<HTMLButtonElement>('.line button')!.click();
+    element.querySelector<HTMLButtonElement>('.line:not(.head) button')!.click();
     fixture.detectChanges();
-    expect(element.querySelectorAll('.line')).toHaveLength(1);
+    expect(element.querySelectorAll('.line:not(.head)')).toHaveLength(1);
   });
 
   it('reports a draft that could not be created', async () => {

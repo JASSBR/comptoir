@@ -48,21 +48,23 @@ import { Icon } from './icon';
       gap: 0.7rem;
       padding: 0.85rem 0.9rem;
       border-radius: var(--radius);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-lg);
+      background: var(--sheet);
+      border: 1px solid var(--rule);
+      box-shadow:
+        4px 5px 0 -1px var(--carbon-yellow-soft),
+        4px 5px 0 0 var(--rule);
       animation: slide-in 0.25s ease-out;
       font-size: 0.88rem;
     }
     .toast app-icon {
-      color: var(--accent);
+      color: var(--ink);
       margin-top: 0.1rem;
     }
     [data-tone='success'] app-icon {
-      color: var(--status-approved);
+      color: var(--ok);
     }
     [data-tone='error'] app-icon {
-      color: var(--status-rejected);
+      color: var(--stamp-red);
     }
     .toast div {
       flex: 1;

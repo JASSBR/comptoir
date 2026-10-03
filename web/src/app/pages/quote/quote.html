@@ -1,27 +1,34 @@
 <header class="page-header">
   <div>
-    <span class="eyebrow">Nouveau · impossible dans l'application de 2014</span>
     <h1>Devis express</h1>
-    <p class="muted">
-      Le tarif se recalcule à chaque saisie avec les règles portées en .NET 10 — prouvées identiques
-      à la procédure stockée historique par des tests différentiels.
+    <p class="lede">
+      Le prix se recalcule pendant la saisie, avec les règles de 2014 réécrites en .NET 10 et
+      vérifiées au centime près contre l'ancienne procédure. L'application de 2014 ne savait
+      chiffrer qu'une commande déjà enregistrée.
     </p>
   </div>
 </header>
 
-<div class="layout">
-  <section class="card editor">
-    <label>
+<div class="desk">
+  <section class="sheet entry" aria-label="Saisie du devis">
+    <label class="field">
       <span>Client</span>
       <select (change)="setCustomer($any($event.target).value)" data-field="customer">
-        <option value="">Choisir un client…</option>
+        <option value="">Choisir un client</option>
         @for (customer of customers.value(); track customer.id) {
-          <option [value]="customer.id">{{ customer.name }} — remise {{ customer.tier }}</option>
+          <option [value]="customer.id" [selected]="customer.id === customerId()">
+            {{ customer.name }}, remise {{ customer.tier }}
+          </option>
         }
       </select>
     </label>
+    <app-load-state [resource]="customers" [rows]="1" />
 
     <div class="lines">
+      <div class="line head" aria-hidden="true">
+        <span>Article</span>
+        <span>Quantité</span>
+      </div>
       @for (line of lines(); track line.key) {
         <div class="line" [class.short]="isShort(line.productId)">
           <select
@@ -29,10 +36,10 @@
             aria-label="Article"
             data-field="product"
           >
-            <option value="">Article…</option>
+            <option value="">Choisir un article</option>
             @for (product of products.value(); track product.id) {
               <option [value]="product.id" [selected]="product.id === line.productId">
-                {{ product.sku }} — {{ product.label }}
+                {{ product.label }} ({{ product.sku }})
               </option>
             }
           </select>
@@ -46,7 +53,7 @@
           />
           <button
             type="button"
-            class="button ghost sm"
+            class="button quiet small"
             (click)="removeLine(line.key)"
             aria-label="Retirer la ligne"
           >
@@ -55,29 +62,32 @@
         </div>
       }
     </div>
-    <button type="button" class="button sm" (click)="addLine()">
-      <app-icon name="plus" [size]="16" /> Ligne
+    <button type="button" class="button small add" (click)="addLine()">
+      <app-icon name="plus" [size]="16" /> Ajouter une ligne
     </button>
 
-    <aside class="rules muted">
-      Remise A 10 %, B 5 % · +3 % à partir de 100 unités sur une ligne · plafond 12 % · franco de
-      port à 300 € HT, sinon 15 € HT · TVA arrondie ligne par ligne.
-    </aside>
+    <p class="rules">
+      Remise client A : 10 %, B : 5 %. Trois points de plus à partir de 100 unités sur une même
+      ligne, dans la limite de 12 %. Port offert à partir de 300 € HT, sinon 15 € HT.
+    </p>
   </section>
 
-  <section class="card result" aria-live="polite">
+  <section class="slip" aria-live="polite" aria-label="Devis chiffré">
     @if (quote.value(); as q) {
-      <div class="card-title">
-        <h2>{{ q.customer.name }}</h2>
-        <span class="chip">remise {{ q.customer.tier }} · {{ q.customer.tierDiscountPct }} %</span>
-      </div>
+      <header>
+        <span class="slip-kind">Devis</span>
+        <strong>{{ q.customer.name }}</strong>
+        <span class="muted"
+          >remise {{ q.customer.tier }} de {{ q.customer.tierDiscountPct }} %</span
+        >
+      </header>
       <table>
         <thead>
           <tr>
-            <th>Article</th>
+            <th>Désignation</th>
             <th class="num">Qté</th>
             <th class="num">Remise</th>
-            <th class="num">Total HT</th>
+            <th class="num">Montant HT</th>
           </tr>
         </thead>
         <tbody>
@@ -86,15 +96,15 @@
               <td>
                 {{ line.label }}
                 @if (line.volumeDiscount) {
-                  <span class="chip volume">volume</span>
+                  <small class="tag">remise volume</small>
                 }
                 @if (q.outOfStock.includes(line.productId)) {
-                  <span class="chip stock">stock insuffisant</span>
+                  <small class="tag short">stock insuffisant</small>
                 }
               </td>
               <td class="num">{{ line.quantity }}</td>
               <td class="num">{{ line.discountPct | number: '1.0-2' }} %</td>
-              <td class="num amount">{{ line.lineHT | currency }}</td>
+              <td class="num">{{ line.lineHT | currency }}</td>
             </tr>
           }
         </tbody>
@@ -102,32 +112,39 @@
 
       <div class="shipping">
         @if (q.shippingHT > 0) {
-          <span
-            >Plus que <strong>{{ q.missingForFreeShipping | currency }}</strong> pour le franco de
-            port</span
+          <p>
+            Encore <strong>{{ q.missingForFreeShipping | currency }}</strong> HT pour que le port
+            soit offert.
+          </p>
+          <div
+            class="meter"
+            role="img"
+            [attr.aria-label]="
+              'Franco de port atteint à ' + (freeShippingProgress() * 100 | number: '1.0-0') + ' %'
+            "
           >
+            <span [style.width.%]="freeShippingProgress() * 100"></span>
+          </div>
         } @else {
-          <span><app-icon name="check" [size]="16" /> Franco de port</span>
+          <span class="stamp franco" data-mode="New">Franco de port</span>
         }
-        <div class="meter"><span [style.width.%]="freeShippingProgress() * 100"></span></div>
       </div>
 
       <dl class="totals">
         <dt>Total HT</dt>
-        <dd class="amount">{{ q.totalHT | currency }}</dd>
+        <dd>{{ q.totalHT | currency }}</dd>
         <dt>Port HT</dt>
-        <dd class="amount">{{ q.shippingHT | currency }}</dd>
+        <dd>{{ q.shippingHT | currency }}</dd>
         <dt>TVA</dt>
-        <dd class="amount">{{ q.totalVAT | currency }}</dd>
+        <dd>{{ q.totalVAT | currency }}</dd>
         <dt class="ttc">Total TTC</dt>
-        <dd class="amount ttc" data-field="total">{{ q.totalTTC | currency }}</dd>
+        <dd class="ttc" data-field="total">{{ q.totalTTC | currency }}</dd>
       </dl>
 
       @if (createdId(); as id) {
-        <a class="button success" [href]="'/#!/commandes/' + id">
-          <app-icon name="external" [size]="16" /> Ouvrir le brouillon n° {{ id }} dans l'interface
-          historique
-        </a>
+        <a class="button primary" [href]="'/#!/commandes/' + id"
+          >Ouvrir le brouillon n° {{ id }} dans les écrans de 2014</a
+        >
       } @else {
         <button
           type="button"
@@ -135,15 +152,20 @@
           [disabled]="creating() || q.outOfStock.length > 0"
           (click)="createDraft()"
         >
-          Créer le brouillon
+          Créer le brouillon de commande
         </button>
       }
     } @else if (quote.isLoading()) {
-      <div class="skeleton" style="height: 14rem"></div>
-    } @else {
-      <p class="muted empty">
-        Choisissez un client et au moins un article : le devis apparaît ici.
+      <div class="skeleton" style="height: 16rem"></div>
+    } @else if (quote.error()) {
+      <p class="note error">
+        Le chiffrage n'a pas abouti. Modifiez une ligne pour relancer le calcul.
       </p>
+    } @else {
+      <div class="blank">
+        <span class="slip-kind">Devis</span>
+        <p>Choisissez un client et un article : le devis se remplit ici.</p>
+      </div>
     }
   </section>
 </div>

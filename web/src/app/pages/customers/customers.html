@@ -1,0 +1,40 @@
+<header class="page-header">
+  <div>
+    <h1>Clients</h1>
+    <p class="lede">
+      La remise d'un client dépend de sa catégorie. Elle s'ajoute à la remise de volume, sans jamais
+      dépasser 12 %.
+    </p>
+  </div>
+</header>
+
+<app-load-state [resource]="customers" [rows]="6" />
+
+<div class="tiers">
+  @for (tier of tiers(); track tier.code) {
+    <section class="sheet tier" [attr.data-tier]="tier.code">
+      <header>
+        <span class="letter figure">{{ tier.code }}</span>
+        <div>
+          <h2>Remise de {{ tier.discount }} %</h2>
+          <p class="muted">{{ tier.meaning }}</p>
+        </div>
+      </header>
+      <ul>
+        @for (customer of tier.customers; track customer.id) {
+          <li>
+            <div>
+              <strong>{{ customer.name }}</strong>
+              <span class="muted">{{ customer.city }}, compte {{ customer.code }}</span>
+            </div>
+            <a class="button small" routerLink="/devis" [queryParams]="{ client: customer.id }"
+              >Faire un devis</a
+            >
+          </li>
+        } @empty {
+          <li class="muted">Aucun client dans cette catégorie.</li>
+        }
+      </ul>
+    </section>
+  }
+</div>

@@ -1,47 +1,63 @@
 <header class="page-header">
   <div>
-    <span class="eyebrow">Servi par la nouvelle application</span>
     <h1>Catalogue</h1>
-    <p class="muted">
-      Même route <code>/api/products</code> que l'écran de 2014 : la façade l'envoie déjà au .NET
-      10.
+    <p class="lede">
+      {{ products.value().length }} articles, prix hors taxes.
+      @if (lowCount()) {
+        {{ lowCount() }} sous le seuil de réapprovisionnement.
+      }
     </p>
   </div>
+  <label class="field search">
+    <span>Rechercher</span>
+    <input
+      type="search"
+      placeholder="Farine, beurre, FAR-T55…"
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+  </label>
 </header>
 
-<div class="filters">
-  <input
-    type="search"
-    placeholder="Rechercher un article ou une référence…"
-    [value]="search()"
-    (input)="search.set($any($event.target).value)"
-  />
-  <div class="chips" role="group" aria-label="Familles">
-    <button type="button" [class.active]="!category()" (click)="category.set('')">Toutes</button>
-    @for (c of categories(); track c) {
-      <button type="button" [class.active]="category() === c" (click)="category.set(c)">
-        {{ c }}
-      </button>
-    }
-  </div>
-</div>
+<app-load-state [resource]="products" [rows]="8" />
 
-<section class="grid">
-  @for (product of visible(); track product.id) {
-    <article class="card product">
-      <span class="sku">{{ product.sku }}</span>
-      <strong>{{ product.label }}</strong>
-      <span class="muted family">{{ product.category }} · TVA {{ product.vatRate }} %</span>
-      <div class="foot">
-        <span class="amount price">{{ product.unitPrice | currency }} <small>HT</small></span>
-        <span class="stock" [class.low]="product.available < lowStock"
-          >{{ product.available }} dispo.</span
-        >
-      </div>
-    </article>
+<section class="sheet triplicate list">
+  @for (family of families(); track family.name) {
+    <h2>{{ family.name }}</h2>
+    <table>
+      <colgroup>
+        <col />
+        <col class="col-sku" />
+        <col class="col-vat" />
+        <col class="col-stock" />
+        <col class="col-price" />
+      </colgroup>
+      <thead class="sr-only">
+        <tr>
+          <th>Désignation</th>
+          <th>Référence</th>
+          <th class="num">TVA</th>
+          <th class="num">Disponible</th>
+          <th class="num">Prix HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of family.products; track product.id) {
+          <tr class="product">
+            <td class="label">{{ product.label }}</td>
+            <td class="muted sku">{{ product.sku }}</td>
+            <td class="num muted">TVA {{ product.vatRate | number: '1.0-1' }} %</td>
+            <td class="num stock" [class.low]="product.available < lowStock">
+              {{ product.available }} en stock
+            </td>
+            <td class="num price figure">{{ product.unitPrice | currency }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
   } @empty {
-    @if (!products.isLoading()) {
-      <p class="muted">Aucun article.</p>
+    @if (!products.isLoading() && !products.error()) {
+      <p class="muted">Aucun article ne correspond à « {{ search() }} ».</p>
     }
   }
 </section>

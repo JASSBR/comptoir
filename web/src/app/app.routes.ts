@@ -17,6 +17,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/quote/quote').then((m) => m.QuoteBuilder),
       },
       {
+        path: 'clients',
+        title: 'Clients · Comptoir Durand',
+        loadComponent: () => import('./pages/customers/customers').then((m) => m.Customers),
+      },
+      {
         path: 'catalogue',
         title: 'Catalogue · Comptoir Durand',
         loadComponent: () => import('./pages/catalog/catalog').then((m) => m.Catalog),

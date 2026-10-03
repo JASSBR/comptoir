@@ -1,10 +1,20 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { HttpClient, httpResource } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+} from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '../../core/toast';
 import { Customer, Product, Quote } from '../../models';
 import { Icon } from '../../shared/icon';
+import { LoadState } from '../../shared/load-state';
 
 interface DraftLine {
   readonly key: number;
@@ -16,7 +26,7 @@ const FREE_SHIPPING_FROM = 300;
 
 @Component({
   selector: 'app-quote',
-  imports: [CurrencyPipe, DecimalPipe, Icon],
+  imports: [CurrencyPipe, DecimalPipe, Icon, LoadState],
   templateUrl: './quote.html',
   styleUrl: './quote.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,6 +35,9 @@ export class QuoteBuilder {
   private readonly http = inject(HttpClient);
   private readonly toasts = inject(ToastService);
   private nextKey = 1;
+
+  /** ?client=… from the customer list: the quote starts with that customer chosen. */
+  readonly client = input<string>();
 
   protected readonly customers = httpResource<Customer[]>(() => '/api/customers', {
     defaultValue: [],
@@ -56,6 +69,17 @@ export class QuoteBuilder {
     const body = this.request();
     return body ? { url: '/api/v2/quotes', method: 'POST', body } : undefined;
   });
+
+  protected readonly customerName = computed(
+    () => this.customers.value().find((customer) => customer.id === this.customerId())?.name ?? '',
+  );
+
+  constructor() {
+    effect(() => {
+      const client = Number(this.client());
+      if (client) untracked(() => this.customerId.set(client));
+    });
+  }
 
   protected readonly freeShippingProgress = computed(() => {
     const quote = this.quote.value();

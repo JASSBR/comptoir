@@ -1,62 +1,55 @@
-.filters {
-  display: grid;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
+.search {
+  min-width: min(100%, 20rem);
 }
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+.list h2 {
+  margin: 1.5rem 0 0.25rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--graphite);
 }
-.chips button {
-  padding: 0.35rem 0.8rem;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  cursor: pointer;
+.list h2:first-child {
+  margin-top: 0;
 }
-.chips button.active {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--accent-soft);
+.list table {
+  table-layout: fixed;
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.9rem;
+.col-sku {
+  width: 9.5rem;
 }
-.product {
-  display: grid;
-  gap: 0.3rem;
-  align-content: start;
+.col-vat {
+  width: 7rem;
+}
+.col-stock {
+  width: 8.5rem;
+}
+.col-price {
+  width: 7rem;
+}
+.list td {
+  padding-block: 0.55rem;
+}
+.label {
+  font-weight: 500;
 }
 .sku {
-  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 0.75rem;
-  color: var(--accent);
+  font-size: 0.82rem;
 }
-.family {
-  font-size: 0.8rem;
+.stock {
+  font-size: 0.85rem;
+  color: var(--ok);
 }
-.foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 0.5rem;
+.stock.low {
+  color: var(--stamp-red);
+  font-weight: 600;
 }
 .price {
   font-size: 1.15rem;
-  font-weight: 700;
+  white-space: nowrap;
 }
-.stock {
-  font-size: 0.8rem;
-  color: var(--success);
-  font-weight: 600;
-}
-.stock.low {
-  color: var(--danger);
+@media (max-width: 700px) {
+  .col-sku,
+  .col-vat,
+  .sku,
+  td.muted {
+    display: none;
+  }
 }

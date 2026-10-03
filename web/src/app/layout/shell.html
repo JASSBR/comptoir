@@ -1,67 +1,52 @@
-<div class="layout">
-  <aside class="sidebar">
-    <a routerLink="/migration" class="brand" aria-label="Comptoir Durand">
-      <span class="logo" aria-hidden="true"></span>
-      <span>Comptoir</span>
+<header class="masthead">
+  <div class="inner">
+    <a routerLink="/migration" class="brand" aria-label="Comptoir Durand, accueil">
+      <span class="seal" aria-hidden="true">CD</span>
+      <span class="name">
+        <strong>Comptoir Durand</strong>
+        <small>Fournitures de boulangerie, Lyon depuis 1987</small>
+      </span>
     </a>
 
-    <nav aria-label="Navigation principale">
-      <p class="nav-label">Migration</p>
-      <a routerLink="/migration" routerLinkActive="active"
-        ><app-icon name="activity" /> <span>Tableau de bord</span></a
+    <div class="account">
+      <button
+        type="button"
+        class="button quiet small"
+        (click)="theme.toggle()"
+        [attr.aria-label]="
+          theme.theme() === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'
+        "
       >
-      <p class="nav-label">Nouveaux écrans</p>
-      <a routerLink="/devis" routerLinkActive="active"
-        ><app-icon name="euro" /> <span>Devis express</span></a
-      >
-      <a routerLink="/catalogue" routerLinkActive="active"
-        ><app-icon name="folder" /> <span>Catalogue</span></a
-      >
-      <p class="nav-label">Application 2014</p>
-      <a href="/"><app-icon name="external" /> <span>Interface historique</span></a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <a [href]="repositoryUrl" target="_blank" rel="noopener"
-        ><app-icon name="github" /> <span>Code source</span></a
-      >
-      <a [href]="repositoryUrl + '/tree/main/docs/adr'" target="_blank" rel="noopener"
-        ><app-icon name="file" /> <span>Décisions d'architecture</span></a
-      >
+        <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" [size]="18" />
+      </button>
+      @if (session.user(); as user) {
+        <span class="user">
+          <strong>{{ user.displayName }}</strong>
+          <small>{{ roleLabel(user.role) }}</small>
+        </span>
+      } @else if (session.checked()) {
+        <a class="button primary small" [href]="loginUrl">Se connecter</a>
+      }
     </div>
-  </aside>
-
-  <div class="main">
-    <header class="topbar">
-      <span class="live on" role="status">
-        <span class="pulse" aria-hidden="true"></span>
-        <span>Même session que l'application historique</span>
-      </span>
-      <div class="actions">
-        <button
-          type="button"
-          class="icon-button"
-          (click)="theme.toggle()"
-          aria-label="Changer de thème"
-        >
-          <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
-        </button>
-        @if (session.user(); as user) {
-          <div class="user">
-            <app-avatar [name]="user.displayName" [size]="34" />
-            <span class="who">
-              <strong>{{ user.displayName }}</strong>
-              <small>{{ user.role }}</small>
-            </span>
-          </div>
-        } @else if (session.checked()) {
-          <a class="button primary sm" [href]="loginUrl">Se connecter</a>
-        }
-      </div>
-    </header>
-
-    <main class="content">
-      <router-outlet />
-    </main>
   </div>
-</div>
+
+  <nav class="tabs inner" aria-label="Navigation principale">
+    <a routerLink="/migration" routerLinkActive="active">Migration</a>
+    <a routerLink="/devis" routerLinkActive="active">Devis express</a>
+    <a routerLink="/catalogue" routerLinkActive="active">Catalogue</a>
+    <a routerLink="/clients" routerLinkActive="active">Clients</a>
+    <a href="/" class="legacy">Écrans de 2014 <app-icon name="external" [size]="14" /></a>
+  </nav>
+</header>
+
+<main class="inner content">
+  <router-outlet />
+</main>
+
+<footer class="inner footer">
+  <span>Application de démonstration : données fictives.</span>
+  <a [href]="repositoryUrl" target="_blank" rel="noopener">Code source</a>
+  <a [href]="repositoryUrl + '/tree/main/docs/adr'" target="_blank" rel="noopener"
+    >Décisions d'architecture</a
+  >
+</footer>

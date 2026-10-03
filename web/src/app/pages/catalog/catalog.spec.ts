@@ -1,12 +1,20 @@
+import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import localeFr from '@angular/common/locales/fr';
+import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Catalog } from './catalog';
 
 describe('Catalog', () => {
-  it('filters by family and by text, and flags low stock', async () => {
+  it('lists products by family, finds them by name or reference, and flags low stock', async () => {
+    registerLocaleData(localeFr);
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LOCALE_ID, useValue: 'fr-FR' },
+      ],
     });
     const http = TestBed.inject(HttpTestingController);
     const fixture = TestBed.createComponent(Catalog);
@@ -34,19 +42,24 @@ describe('Catalog', () => {
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelectorAll('.product')).toHaveLength(2);
-    expect(element.querySelector('.stock.low')!.textContent).toContain('4');
+    expect([...element.querySelectorAll('h2')].map((h) => h.textContent)).toEqual([
+      'Farines',
+      'Materiel',
+    ]);
+    expect(element.querySelector('.stock.low')!.textContent).toContain('4 en stock');
+    expect(element.querySelector('.lede')!.textContent).toContain('1 sous le seuil');
+    expect(element.textContent).toContain('TVA 5,5 %');
 
-    element.querySelectorAll<HTMLButtonElement>('.chips button')[2].click();
+    const search = element.querySelector<HTMLInputElement>('input[type=search]')!;
+    search.value = 'mat-the';
+    search.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(element.querySelectorAll('.product')).toHaveLength(1);
 
-    element.querySelectorAll<HTMLButtonElement>('.chips button')[0].click();
-    const search = element.querySelector<HTMLInputElement>('input[type=search]')!;
-    search.value = 'far';
+    search.value = 'introuvable';
     search.dispatchEvent(new Event('input'));
     fixture.detectChanges();
-    expect(element.querySelector('.product strong')!.textContent).toBe('Farine T55');
+    expect(element.querySelector('.list')!.textContent).toContain('Aucun article');
     http.verify();
   });
 });

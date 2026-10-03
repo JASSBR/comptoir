@@ -1,297 +1,337 @@
-@use '@fontsource-variable/inter';
+@use '@fontsource/barlow-condensed/500.css' as barlowcondensed-500;
+@use '@fontsource/barlow-condensed/600.css' as barlowcondensed-600;
+@use '@fontsource/barlow-condensed/700.css' as barlowcondensed-700;
+@use '@fontsource/ibm-plex-sans/400.css' as ibmplexsans-400;
+@use '@fontsource/ibm-plex-sans/500.css' as ibmplexsans-500;
+@use '@fontsource/ibm-plex-sans/600.css' as ibmplexsans-600;
 
-/* ---------- Design tokens ---------- */
+/*
+ * Comptoir — "the triplicate order pad".
+ * A wholesaler's counter runs on carbon-copy order books: the white original, the yellow and the pink copies,
+ * filled in with a blue ballpoint and stamped. The migration reads the same way:
+ *   blue ink = the new application, yellow copy = being checked (shadow), pink copy = still the 2014 application.
+ */
 :root {
-  --bg: #f7f5f2;
-  --surface: #ffffff;
-  --surface-2: #eef0f6;
-  --border: #e3e6ef;
-  --text: #0f1424;
-  --muted: #5b6377;
-  --accent: #c2410c;
-  --accent-2: #a16207;
-  --accent-soft: #fdf0e8;
-  --on-accent: #ffffff;
-  --danger: #dc2626;
-  --success: #059669;
-  --status-declared: #4f46e5;
-  --status-review: #b45309;
-  --status-info: #db2777;
-  --status-approved: #059669;
-  --status-rejected: #dc2626;
-  --status-settled: #0e7490;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 2px rgb(15 20 36 / 5%), 0 1px 3px rgb(15 20 36 / 6%);
-  --shadow-lg: 0 12px 32px -8px rgb(15 20 36 / 18%);
-  --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+  --paper: #eef1f6;
+  --sheet: #ffffff;
+  --graphite: #1c2230;
+  --muted: #5b6478;
+  --rule: #d6dce8;
+  --rule-strong: #b8c1d3;
+  --ink: #2742c8;
+  --ink-strong: #1a2f96;
+  --ink-soft: #e6eafb;
+  --carbon-yellow: #ffe36e;
+  --carbon-yellow-soft: #fff4c2;
+  --carbon-pink: #f7c7d3;
+  --carbon-pink-soft: #fce6ec;
+  --stamp-red: #c8322f;
+  --ok: #1f7a4d;
+
+  --display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body: 'IBM Plex Sans', system-ui, sans-serif;
+  --radius: 6px;
+  --focus: 0 0 0 3px color-mix(in srgb, var(--ink) 35%, transparent);
+
   color-scheme: light;
 }
 
-[data-theme='dark'] {
-  --bg: #0a0d16;
-  --surface: #111625;
-  --surface-2: #1a2033;
-  --border: #252c42;
-  --text: #e8ebf4;
-  --muted: #99a2b9;
-  --accent: #fb923c;
-  --accent-2: #facc15;
-  --accent-soft: #3a2316;
-  --on-accent: #0a0d16;
-  --status-declared: #a5b4fc;
-  --status-review: #fbbf24;
-  --status-info: #f472b6;
-  --status-approved: #34d399;
-  --status-rejected: #f87171;
-  --status-settled: #67e8f9;
-  --shadow: 0 1px 2px rgb(0 0 0 / 40%);
-  --shadow-lg: 0 16px 40px -10px rgb(0 0 0 / 60%);
+/* Night shift: the same pad under a desk lamp. */
+:root[data-theme='dark'] {
+  --paper: #0d1430;
+  --sheet: #151f47;
+  --graphite: #e8ecf8;
+  --muted: #9aa6c6;
+  --rule: #26336a;
+  --rule-strong: #34458a;
+  --ink: #8ea4ff;
+  --ink-strong: #b6c4ff;
+  --ink-soft: #1f2c63;
+  --carbon-yellow: #e9c84a;
+  --carbon-yellow-soft: #3a3417;
+  --carbon-pink: #e79bb0;
+  --carbon-pink-soft: #3d2130;
+  --stamp-red: #ff7a72;
+  --ok: #57c48c;
   color-scheme: dark;
 }
 
-/* ---------- Base ---------- */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
+html,
+body {
+  margin: 0;
+  min-height: 100%;
 }
 
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font:
-    15px/1.5 'Inter Variable',
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    sans-serif;
-  font-feature-settings: 'cv11', 'ss01';
+  background: var(--paper);
+  color: var(--graphite);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
 }
 
 h1,
 h2,
 h3 {
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: 0.005em;
 }
 h1 {
-  font-size: 1.65rem;
-  margin: 0;
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
 }
 h2 {
-  font-size: 1rem;
-  margin: 0 0 0.9rem;
+  font-size: 1.55rem;
 }
 h3 {
-  font-size: 0.9rem;
-  margin: 1rem 0 0.5rem;
+  font-size: 1.2rem;
+}
+p {
+  margin: 0;
 }
 a {
-  color: var(--accent);
+  color: var(--ink);
 }
 :focus-visible {
   outline: none;
   box-shadow: var(--focus);
+  border-radius: 3px;
 }
 
+/* ---------- Page structure ---------- */
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: 1.75rem;
+}
+.lede {
+  max-width: 62ch;
+  margin-top: 0.6rem;
+  color: var(--muted);
+}
+.muted {
+  color: var(--muted);
+}
+
+/* A sheet of paper. The main sheet of a page shows the yellow and pink copies beneath it. */
+.sheet {
+  position: relative;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.sheet.triplicate {
+  margin: 0 10px 14px 0;
+  box-shadow:
+    5px 6px 0 -1px var(--carbon-yellow-soft),
+    5px 6px 0 0 var(--rule),
+    10px 12px 0 -1px var(--carbon-pink-soft),
+    10px 12px 0 0 var(--rule);
+}
+.sheet + .sheet {
+  margin-top: 1.25rem;
+}
+.sheet-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 2px solid var(--graphite);
+}
+
+/* ---------- Rubber stamps (the one loud thing) ---------- */
+
+.stamp {
+  display: inline-block;
+  padding: 0.12rem 0.55rem 0.05rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stamp-color, var(--ink));
+  border: 2.5px solid currentColor;
+  border-radius: 4px;
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  transform: rotate(-4deg);
+  white-space: nowrap;
+  /* Uneven ink: a stamp never prints perfectly. */
+  mask-image: repeating-radial-gradient(circle at 30% 40%, #000 0 2px, rgb(0 0 0 / 82%) 2px 3px);
+}
+.stamp[data-mode='New'] {
+  --stamp-color: var(--ink);
+}
+.stamp[data-mode='Shadow'] {
+  --stamp-color: #9a7400;
+  background: var(--carbon-yellow-soft);
+}
+.stamp[data-mode='Legacy'] {
+  --stamp-color: #a3304e;
+  background: var(--carbon-pink-soft);
+}
+:root[data-theme='dark'] .stamp[data-mode='Shadow'] {
+  --stamp-color: var(--carbon-yellow);
+}
+:root[data-theme='dark'] .stamp[data-mode='Legacy'] {
+  --stamp-color: var(--carbon-pink);
+}
+
+/* ---------- Form fields: written on the line, like a paper form ---------- */
+
+.field {
+  display: grid;
+  gap: 0.2rem;
+}
+.field > span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+}
 input,
 select,
 textarea {
+  width: 100%;
   font: inherit;
-  font-weight: 400;
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
-
-  &:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: var(--focus);
-  }
-  &[aria-invalid='true'].ng-touched {
-    border-color: var(--danger);
-  }
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-bottom: 1.5px solid var(--rule-strong);
+  border-radius: 0;
+  padding: 0.45rem 0.1rem;
+  transition: border-color 0.15s;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-bottom-color: var(--ink);
+  box-shadow: 0 1px 0 0 var(--ink);
+}
+select {
+  cursor: pointer;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,
-td {
-  padding: 0.8rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-th {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-  font-weight: 600;
-  background: var(--surface);
-}
-tbody tr {
-  transition: background-color 0.12s;
-}
-tbody tr:hover {
-  background: color-mix(in srgb, var(--accent) 4%, transparent);
-}
-tbody tr:last-child td {
-  border-bottom: 0;
-}
-.num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
+/* ---------- Buttons ---------- */
 
-/* ---------- Components ---------- */
 .button,
 button.button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
+  padding: 0.6rem 1.1rem;
   font: inherit;
-  font-size: 0.9rem;
   font-weight: 600;
-  padding: 0.55rem 1rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    transform 0.1s,
-    background-color 0.15s,
-    border-color 0.15s,
-    box-shadow 0.15s;
-
-  &:hover:not(:disabled) {
-    border-color: color-mix(in srgb, var(--text) 25%, var(--border));
-  }
-  &:active:not(:disabled) {
-    transform: translateY(1px);
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  &.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--on-accent);
-    box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--accent) 60%, transparent);
-  }
-  &.success {
-    background: var(--success);
-    border-color: var(--success);
-    color: #fff;
-  }
-  &.danger {
-    background: transparent;
-    border-color: color-mix(in srgb, var(--danger) 40%, transparent);
-    color: var(--danger);
-  }
-  &.ghost {
-    background: transparent;
-    border-color: transparent;
-  }
-  &.sm {
-    padding: 0.35rem 0.7rem;
-    font-size: 0.82rem;
-  }
+}
+.button:hover:not(:disabled) {
+  background: var(--ink-soft);
+}
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.button.primary {
+  color: #fff;
+  background: var(--ink);
+}
+.button.primary:hover:not(:disabled) {
+  background: var(--ink-strong);
+  border-color: var(--ink-strong);
+}
+:root[data-theme='dark'] .button.primary {
+  color: var(--paper);
+}
+.button.quiet {
+  border-color: transparent;
+}
+.button.small {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
 }
 
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  box-shadow: var(--shadow);
-}
+/* ---------- Tables: a ledger page ---------- */
 
-.card-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.card-title h2 {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.page-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-.eyebrow {
-  display: block;
-  font-size: 0.75rem;
+th {
+  font-family: var(--display);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-  margin-bottom: 0.35rem;
+  font-size: 1rem;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--graphite);
 }
-.muted {
-  color: var(--muted);
-  margin: 0;
+td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
 }
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.88rem;
-  text-decoration: none;
-  color: var(--muted);
+tbody tr:hover {
+  background: color-mix(in srgb, var(--ink-soft) 55%, transparent);
 }
-.back:hover {
-  color: var(--accent);
+.num {
+  text-align: right;
 }
-.alert {
-  margin: 0;
-  padding: 0.75rem 1rem 0.75rem 2rem;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--danger) 10%, transparent);
-  color: var(--danger);
-  font-size: 0.9rem;
+.figure {
+  font-family: var(--display);
+  font-weight: 600;
 }
-p.alert {
-  padding-left: 1rem;
+
+/* ---------- Notes, states ---------- */
+
+.note {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--ink);
+  background: var(--ink-soft);
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
-.field-error {
-  color: var(--danger);
-  font-weight: 500;
-  font-size: 0.8rem;
+.note.warning {
+  border-color: #b98a00;
+  background: var(--carbon-yellow-soft);
 }
+.note.error {
+  border-color: var(--stamp-red);
+  background: var(--carbon-pink-soft);
+}
+.skeleton {
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--rule) 25%, var(--paper) 50%, var(--rule) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -299,35 +339,6 @@ p.alert {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: var(--surface-2);
-  color: var(--muted);
-}
-
-.skeleton {
-  border-radius: var(--radius-sm);
-  background: linear-gradient(
-    90deg,
-    var(--surface-2) 25%,
-    color-mix(in srgb, var(--surface-2) 50%, var(--surface)) 50%,
-    var(--surface-2) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-}
-
-@keyframes shimmer {
-  to {
-    background-position: -200% 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -337,34 +348,4 @@ p.alert {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ---------- Money ---------- */
-.amount {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.amount.credit {
-  color: var(--success);
-}
-.amount.debit {
-  color: var(--text);
-}
-.iban {
-  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-  font-size: 0.85em;
-  letter-spacing: 0.02em;
-}
-
-/* Brand mark, shared by the welcome page and the shell. */
-.logo {
-  width: 1.7rem;
-  height: 1.7rem;
-  border-radius: 7px;
-  /* A shop awning: the counter (comptoir) of a wholesaler. */
-  background:
-    repeating-linear-gradient(90deg, var(--accent) 0 0.34rem, #fff 0.34rem 0.68rem) top / 100% 45%
-      no-repeat,
-    linear-gradient(var(--accent-2), var(--accent-2)) bottom / 100% 55% no-repeat;
-  box-shadow: 0 6px 16px -6px var(--accent);
 }

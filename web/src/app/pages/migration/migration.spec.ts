@@ -28,26 +28,29 @@ describe('Migration', () => {
     return { fixture, element: fixture.nativeElement as HTMLElement };
   }
 
-  it('shows the plan without the catch-all route, and the share already migrated', async () => {
+  it('shows the plan without the catch-all route, sorted onto the three copies', async () => {
     const { element } = await render();
 
     expect(element.querySelectorAll('tbody tr')).toHaveLength(3);
     expect(element.querySelector('[data-route="legacy"]')).toBeNull();
-    expect(element.querySelector('.big')!.textContent).toContain('33');
-    expect(element.querySelector('[data-route="orders-list"] .mode')!.textContent).toContain(
-      'En vérification',
+    expect(element.querySelector('.copy[data-mode="New"] .count')!.textContent).toBe('1');
+    expect(element.querySelector('.copy[data-mode="Legacy"] li')!.textContent).toBe('Facturation');
+    expect(element.querySelector('[data-route="orders-list"] .stamp')!.textContent).toBe(
+      'En contrôle',
     );
   });
 
-  it('shows the agreement rate of shadow traffic and the latest differences', async () => {
+  it('shows the agreement of shadow traffic and the latest differences', async () => {
     const { element } = await render();
 
-    expect(element.querySelector('[data-route="orders-list"] .warn')!.textContent).toContain('75');
+    expect(element.querySelector('[data-route="orders-list"] .differs')!.textContent).toContain(
+      '3 sur 4 identiques',
+    );
     expect(element.querySelector('.difference')!.textContent).toBe(
       '$[0].available: legacy 238, new 237',
     );
     expect(element.querySelector('[data-outcome="Mismatch"] .outcome')!.textContent).toBe(
-      'Différence',
+      'Réponses différentes',
     );
   });
 

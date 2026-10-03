@@ -17,9 +17,15 @@ test('the 2014 screens and the new ones share one session through the facade', a
 
   // New screens, same cookie: no second login.
   await page.goto('/app/migration');
-  await expect(page.locator('.who strong')).toHaveText('Sophie Moreau');
+  await expect(page.locator('.user strong')).toHaveText('Sophie Moreau');
   // The order screens above were read in shadow: the comparisons show up.
-  await expect(page.locator('[data-route="orders-detail"] td.num').first()).not.toHaveText('—');
+  await expect(page.locator('[data-route="orders-detail"] td.num')).toContainText('identiques');
+
+  await page.goto('/app/clients');
+  await expect(page.locator('[data-tier="A"] li').first()).toContainText('compte');
+
+  await page.goto('/app/catalogue');
+  await expect(page.locator('.product').first()).toBeVisible();
 
   await page.goto('/app/devis');
   const customer = page.locator('[data-field=customer]');
