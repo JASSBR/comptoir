@@ -1,0 +1,15 @@
+<div class="page-header"><h2>Catalogue</h2></div>
+<form class="form-inline" ng-submit="load()" style="margin-bottom:10px">
+    <input class="form-control" placeholder="Rechercher…" ng-model="search" />
+    <button class="btn btn-default">Rechercher</button>
+</form>
+<table class="table table-striped">
+    <thead><tr><th>Réf.</th><th>Désignation</th><th>Famille</th><th class="text-right">PU HT</th><th class="text-right">TVA</th><th class="text-right">Disponible</th></tr></thead>
+    <tbody>
+        <tr ng-repeat="p in products">
+            <td>{{p.sku}}</td><td>{{p.label}}</td><td>{{p.category}}</td>
+            <td class="text-right">{{p.unitPrice | number:2}} €</td><td class="text-right">{{p.vatRate}} %</td>
+            <td class="text-right" ng-class="{'text-danger': p.available < 20}">{{p.available}}</td>
+        </tr>
+    </tbody>
+</table>

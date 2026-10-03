@@ -1,0 +1,26 @@
+@{
+    ViewBag.Title = "Gestion commerciale";
+}
+<div ng-app="comptoir">
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header"><a class="navbar-brand" href="#!/commandes">Comptoir Durand</a></div>
+            <ul class="nav navbar-nav">
+                <li><a href="#!/commandes">Commandes</a></li>
+                <li><a href="#!/catalogue">Catalogue</a></li>
+                <li><a href="#!/clients">Clients</a></li>
+            </ul>
+            <form class="navbar-form navbar-right" method="post" action="@Url.Action("Logout", "Account")">
+                @Html.AntiForgeryToken()
+                <span class="navbar-text">@User.Identity.Name</span>
+                <button class="btn btn-default btn-sm" type="submit">Déconnexion</button>
+            </form>
+        </div>
+    </nav>
+    <div class="container-fluid" ng-view></div>
+</div>
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular-route.min.js"></script>
+    <script src="~/Scripts/app/app.js"></script>
+}

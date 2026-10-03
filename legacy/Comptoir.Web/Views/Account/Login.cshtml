@@ -1,0 +1,29 @@
+@{
+    ViewBag.Title = "Connexion";
+}
+<div class="container login-box">
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Comptoir Durand</strong> &mdash; Gestion commerciale</div>
+        <div class="panel-body">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+            @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="login">Identifiant</label>
+                    <input class="form-control" id="login" name="login" autofocus />
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input class="form-control" id="password" name="password" type="password" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+            }
+            <p class="text-muted small demo-hint">Démo : sophie (commerciale), marc (magasin), claire (admin) — mot de passe <code>comptoir-demo</code></p>
+        </div>
+    </div>
+    <p class="text-center text-muted small">v2.3.1 &copy; 2014-2019 Comptoir Durand</p>
+</div>

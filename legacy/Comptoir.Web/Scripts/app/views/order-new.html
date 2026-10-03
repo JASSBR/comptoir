@@ -1,0 +1,24 @@
+<div class="page-header"><a href="#!/commandes">&larr; Commandes</a><h2>Nouvelle commande</h2></div>
+<div class="alert alert-danger" ng-if="error">{{error}}</div>
+<form ng-submit="save()">
+    <div class="form-group">
+        <label>Client</label>
+        <select class="form-control" ng-model="order.customerId" ng-options="c.id as (c.name + ' (' + c.tier + ')') for c in customers" required></select>
+    </div>
+    <table class="table table-condensed">
+        <thead><tr><th>Article</th><th style="width:120px">Quantité</th><th></th></tr></thead>
+        <tbody>
+            <tr ng-repeat="l in order.lines">
+                <td><select class="form-control" ng-model="l.productId" ng-options="p.id as (p.sku + ' — ' + p.label) for p in products" required></select></td>
+                <td><input class="form-control" type="number" min="1" ng-model="l.quantity" required /></td>
+                <td><button type="button" class="btn btn-link" ng-click="removeLine($index)">Retirer</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-default" ng-click="addLine()">+ Ligne</button>
+    <div class="form-group" style="margin-top:12px">
+        <label>Commentaire</label>
+        <input class="form-control" ng-model="order.comment" />
+    </div>
+    <button type="submit" class="btn btn-primary">Enregistrer le brouillon</button>
+</form>

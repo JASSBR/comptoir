@@ -1,0 +1,30 @@
+<div class="page-header">
+    <a href="#!/commandes">&larr; Commandes</a>
+    <h2>Commande {{order.number || ('#' + order.id)}} <span class="label label-{{order.status}}">{{order.statusLabel}}</span></h2>
+    <p class="text-muted">{{order.customer.name}} (remise {{order.customer.tier}}) — créée le {{order.createdOn | date:'dd/MM/yyyy HH:mm'}} par {{order.createdBy}}</p>
+</div>
+<div class="alert alert-danger" ng-if="error">{{error}}</div>
+<p ng-if="order.comment"><em>{{order.comment}}</em></p>
+<table class="table table-condensed">
+    <thead><tr><th>Réf.</th><th>Désignation</th><th class="text-right">Qté</th><th class="text-right">PU HT</th><th class="text-right">Remise</th><th class="text-right">Total HT</th><th class="text-right">TVA</th></tr></thead>
+    <tbody>
+        <tr ng-repeat="l in order.lines">
+            <td>{{l.sku}}</td><td>{{l.label}}</td><td class="text-right">{{l.quantity}}</td>
+            <td class="text-right">{{l.unitPrice | number:2}}</td><td class="text-right">{{l.discountPct | number:2}} %</td>
+            <td class="text-right">{{l.lineHT | number:2}}</td><td class="text-right">{{l.lineVAT | number:2}}</td>
+        </tr>
+    </tbody>
+</table>
+<table class="table table-condensed totals" style="max-width:320px;margin-left:auto">
+    <tr><td>Total HT</td><td>{{order.totalHT | number:2}} €</td></tr>
+    <tr><td>Port HT</td><td>{{order.shippingHT | number:2}} €</td></tr>
+    <tr><td>TVA</td><td>{{order.totalVAT | number:2}} €</td></tr>
+    <tr><th>Total TTC</th><th class="text-right">{{order.totalTTC | number:2}} €</th></tr>
+</table>
+<p ng-if="order.invoiceNumber">Facture <strong>{{order.invoiceNumber}}</strong></p>
+<div class="btn-toolbar">
+    <button class="btn btn-primary" ng-if="order.status == 0" ng-click="act('confirm')">Confirmer</button>
+    <button class="btn btn-warning" ng-if="order.status == 1" ng-click="act('ship')">Expédier</button>
+    <button class="btn btn-success" ng-if="order.status == 2" ng-click="act('invoice')">Facturer</button>
+    <button class="btn btn-danger" ng-if="order.status == 0 || order.status == 1" ng-click="act('cancel')">Annuler</button>
+</div>
