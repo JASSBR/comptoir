@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="CsCheck" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Testcontainers.MsSql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Comptoir.Domain\Comptoir.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Comptoir.DbMigrator\Comptoir.DbMigrator.csproj" />
+  </ItemGroup>
+</Project>

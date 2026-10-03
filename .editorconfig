@@ -35,9 +35,6 @@ dotnet_diagnostic.CA1707.severity = none
 # xUnit test classes are instantiated by the runner, never "sealed by design".
 dotnet_diagnostic.CA1852.severity = none
 
-[src/Ledgerline.SharedKernel/Result.cs]
-# CA1716: "Error" is only reserved in VB.NET; this assembly is never consumed from VB, and Error is the idiomatic name.
-dotnet_diagnostic.CA1716.severity = none
 
 [*.cs]
 # ASP.NET Core has no SynchronizationContext, so ConfigureAwait(false) is noise in this codebase (no library is shipped).
@@ -54,3 +51,5 @@ generated_code = true
 # string-comparison rules only add noise here. Production code keeps them as errors.
 dotnet_diagnostic.MA0006.severity = none
 dotnet_diagnostic.MA0002.severity = none
+# Property-based tests assert through CsCheck's Sample (it throws with the shrunk counter-example); Sonar can't see it.
+dotnet_diagnostic.S2699.severity = none

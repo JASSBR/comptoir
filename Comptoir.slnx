@@ -1,5 +1,9 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Comptoir.DbMigrator/Comptoir.DbMigrator.csproj" />
+    <Project Path="src/Comptoir.Domain/Comptoir.Domain.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Comptoir.DifferentialTests/Comptoir.DifferentialTests.csproj" />
   </Folder>
 </Solution>

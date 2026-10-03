@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pure business rules, ported from the legacy stored procedures: no EF Core, no ASP.NET, no SQL. -->
+</Project>

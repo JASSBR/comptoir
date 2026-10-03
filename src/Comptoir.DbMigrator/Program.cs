@@ -1,5 +1,4 @@
-using System.Reflection;
-using DbUp;
+using Comptoir.DbMigrator;
 
 // Applies legacy/Database/*.sql in name order, each exactly once (journal table dbo.SchemaVersions).
 // The schema is still owned by those scripts during the migration: EF Core in the new application maps it, never
@@ -12,16 +11,7 @@ if (string.IsNullOrWhiteSpace(connectionString))
     return 2;
 }
 
-EnsureDatabase.For.SqlDatabase(connectionString);
-
-var upgrade = DeployChanges.To
-    .SqlDatabase(connectionString)
-    .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-    .WithTransactionPerScript()
-    .LogToConsole()
-    .Build()
-    .PerformUpgrade();
-
+var upgrade = LegacyDatabase.Upgrade(connectionString, log: true);
 if (!upgrade.Successful)
 {
     await Console.Error.WriteLineAsync(upgrade.Error.ToString());
