@@ -1,0 +1,40 @@
+name: Smoke (deployed environment)
+
+# The legacy only runs on IIS: this browser test runs against Azure, on demand and every morning.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Facade URL
+        default: https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io
+  schedule:
+    - cron: "0 6 * * 1-5"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      E2E_BASE_URL: ${{ inputs.base_url || 'https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: |
+            web/playwright-report
+            web/test-results

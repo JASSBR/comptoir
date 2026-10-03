@@ -8,7 +8,8 @@
     "test": "ng test --watch=false",
     "test:coverage": "ng test --watch=false --coverage",
     "lint": "ng lint",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\""
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
+    "e2e": "playwright test"
   },
   "private": true,
   "packageManager": "npm@11.19.0",

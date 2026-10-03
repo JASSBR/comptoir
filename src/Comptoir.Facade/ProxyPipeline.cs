@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO.Compression;
 using Yarp.ReverseProxy.Model;
 
 namespace Comptoir.Facade;
@@ -74,7 +75,33 @@ public static class ProxyPipeline
 
         var route = context.GetReverseProxyFeature().Route.Config.RouteId;
         var token = context.RequestServices.GetRequiredService<FacadeTokens>().For(user);
+        var legacyBody = Decode(buffer.ToArray(), context.Response.Headers.ContentEncoding.ToString());
         context.RequestServices.GetRequiredService<ShadowWorker>().TryEnqueue(new ShadowJob(
-            route, context.Request.Method, context.Request.Path + context.Request.QueryString, token, buffer.ToArray(), legacyMs));
+            route, context.Request.Method, context.Request.Path + context.Request.QueryString, token, legacyBody, legacyMs));
+    }
+
+    /// <summary>
+    /// IIS compresses its answers when the browser accepts it: the user gets those bytes untouched, the comparison
+    /// needs the JSON. (Found in production by the shadow itself: every browser comparison failed on a gzip header.)
+    /// </summary>
+    public static byte[] Decode(byte[] body, string contentEncoding)
+    {
+        ArgumentNullException.ThrowIfNull(body);
+        Func<Stream, Stream>? decoder = contentEncoding.Trim().ToLowerInvariant() switch
+        {
+            "gzip" => stream => new GZipStream(stream, CompressionMode.Decompress),
+            "deflate" => stream => new ZLibStream(stream, CompressionMode.Decompress),
+            "br" => stream => new BrotliStream(stream, CompressionMode.Decompress),
+            _ => null,
+        };
+        if (decoder is null)
+        {
+            return body;
+        }
+
+        using var decoded = decoder(new MemoryStream(body));
+        using var output = new MemoryStream();
+        decoded.CopyTo(output);
+        return output.ToArray();
     }
 }

@@ -81,6 +81,20 @@ public sealed class FacadeTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ShadowRoutes_CompareCompressedLegacyAnswers_AndPassThemOnUntouched()
+    {
+        var client = SignedIn();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/orders/7");
+        request.Headers.AcceptEncoding.ParseAdd("gzip");
+
+        var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        response.Content.Headers.ContentEncoding.ShouldBe(["gzip"]);
+        var status = await WaitForShadowAsync(client, "orders-detail", total: 1);
+        status.GetProperty("matches").GetInt32().ShouldBe(1);
+    }
+
+    [Fact]
     public async Task Status_ListsThePlanInOrder()
     {
         var status = await _facade.CreateClient().GetFromJsonAsync<JsonElement>("/migration/status", TestContext.Current.CancellationToken);

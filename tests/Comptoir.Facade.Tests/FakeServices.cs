@@ -29,6 +29,14 @@ public sealed class FakeServices : IAsyncDisposable
                 ? Results.Ok(new { login = "sophie", role = "commercial", displayName = "Sophie Moreau" })
                 : Results.Redirect("/Account/Login?ReturnUrl=%2fapi%2fsession"));
         _legacy.MapGet("/api/orders", () => Results.Ok(new[] { new { id = 1, available = 238, label = "Farine" } }));
+        // What IIS does when the browser sends Accept-Encoding: gzip.
+        _legacy.MapGet("/api/orders/{id:int}", async (HttpContext context) =>
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.Headers.ContentEncoding = "gzip";
+            await using var gzip = new System.IO.Compression.GZipStream(context.Response.Body, System.IO.Compression.CompressionLevel.Fastest);
+            await gzip.WriteAsync("{\"id\":7,\"label\":\"Farine\"}"u8.ToArray());
+        });
         _legacy.MapGet("/Account/Login", () => Results.Text("<title>Connexion - Comptoir Durand</title>", "text/html"));
         LegacyUrl = await StartAsync(_legacy);
 
@@ -43,6 +51,7 @@ public sealed class FakeServices : IAsyncDisposable
             ApiCalls.Enqueue((request.Path, request.Headers.Authorization, request.Headers.Cookie));
             return Results.Ok(new[] { new { label = "Farine", available = AvailableInNewApi, id = 1.0m } });
         });
+        _api.MapGet("/api/orders/{id:int}", () => Results.Ok(new { label = "Farine", id = 7 }));
         ApiUrl = await StartAsync(_api);
     }
 
