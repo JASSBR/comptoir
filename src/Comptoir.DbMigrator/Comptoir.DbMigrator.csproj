@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="dbup-sqlserver" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The legacy scripts stay where the legacy team keeps them; this tool only replays them, in order, once. -->
+    <EmbeddedResource Include="..\..\legacy\Database\*.sql" LinkBase="Scripts" />
+  </ItemGroup>
+</Project>
