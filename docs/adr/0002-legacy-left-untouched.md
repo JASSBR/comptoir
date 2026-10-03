@@ -1,4 +1,4 @@
-# 0002 — The legacy keeps running as it is (one endpoint added)
+# 0002 — The legacy keeps running as it is (one endpoint added, three defects fixed)
 
 - **Status:** Accepted · 2026-10-03
 
@@ -18,8 +18,14 @@ reliably while it lives.
 - Its database scripts become versioned and automated (DbUp, `src/Comptoir.DbMigrator`), replayed identically in
   tests and in deployments.
 - Deployment stays what it was in 2014: an xcopy package on IIS (App Service Windows). Dependabot ignores `legacy/`.
-- One encoding defect surfaced while doing this (Razor files read as Windows-1252): fixed in `web.config`, the
-  only configuration change.
+- Running it in the cloud surfaced three defects, each fixed with the smallest change and nothing else:
+  - Razor files read as Windows-1252 (accents garbled): `<globalization fileEncoding="utf-8">` in `web.config`;
+  - Azure SQL serverless pauses when idle and answers error 40613 while resuming: the login page failed with a raw
+    IIS error. EF6's `SqlAzureExecutionStrategy` now retries transient errors (`ComptoirDbConfiguration`), and an
+    error page replaces the IIS one;
+  - EF6 wrapped each stored procedure call in a transaction while the procedures manage their own: their business
+    messages came back with "Transaction count after EXECUTE…" appended. The calls now use
+    `TransactionalBehavior.DoNotEnsureTransaction`.
 
 ## Consequences
 

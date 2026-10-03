@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
@@ -138,7 +139,9 @@ namespace Comptoir.Web.Controllers.Api
             {
                 try
                 {
-                    db.Database.ExecuteSqlCommand("EXEC dbo." + procedure + " @p0", id);
+                    // Les procedures gerent leur propre transaction : EF ne doit pas en ouvrir une autour (sinon
+                    // "Transaction count after EXECUTE..." s'ajoute au message metier).
+                    db.Database.ExecuteSqlCommand(TransactionalBehavior.DoNotEnsureTransaction, "EXEC dbo." + procedure + " @p0", id);
                 }
                 catch (SqlException ex) when (ex.Number == 50000)
                 {
