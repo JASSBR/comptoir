@@ -14,3 +14,7 @@ output "sql_connection_string" {
   value     = local.sql_connection_string
   sensitive = true
 }
+
+output "facade_url" {
+  value = local.modern == 1 ? "https://${azurerm_container_app.facade[0].ingress[0].fqdn}" : null
+}

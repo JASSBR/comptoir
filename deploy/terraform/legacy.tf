@@ -13,6 +13,8 @@ resource "azurerm_windows_web_app" "legacy" {
   location            = azurerm_resource_group.this.location
   service_plan_id     = azurerm_service_plan.legacy.id
   https_only          = true
+  # The facade is the only client that matters; sticky-session cookies would only leak the legacy host name.
+  client_affinity_enabled = false
 
   site_config {
     # F1 limits: no always-on, 32-bit worker.

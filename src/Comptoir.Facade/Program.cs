@@ -66,8 +66,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var app = builder.Build();
 app.UseForwardedHeaders();
 app.UseRateLimiter();
+// Before routing: the legacy catch-all route matches every path, and a matched endpoint disables static files.
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseRouting();
 app.MapDefaultEndpoints();
 
 // The migration dashboard's data: the plan, and what the shadow traffic proved for each route.
@@ -86,7 +88,12 @@ app.MapGet("/migration/status", (IOptions<MigrationOptions> options, ShadowLedge
 }));
 
 // The new Angular application, served by the facade so that it shares the legacy session cookie (same origin).
-app.MapFallbackToFile("/app/{**path}", "app/index.html");
+// Deep links (/app/devis) get index.html: an explicit route, so it wins over the legacy catch-all.
+if (app.Configuration["Web:DevServerUrl"] is not { Length: > 0 })
+{
+    app.MapGet("/app/{**path}", (IWebHostEnvironment environment) =>
+        TypedResults.PhysicalFile(Path.Combine(environment.WebRootPath, "app", "index.html"), "text/html"));
+}
 
 app.MapReverseProxy(proxy =>
 {

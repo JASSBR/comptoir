@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/TestResults/
+web/node_modules/
+web/.angular/
+web/dist/
+web/coverage/
+legacy/
+tests/
+deploy/
+docs/
+.git/
+.claude/
