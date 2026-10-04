@@ -55,6 +55,7 @@ differential tests and every switch backed by shadow traffic.
 | **Identity during a migration** | Forms cookie → 5-minute JWT at the facade, legacy cookie stripped — [ADR 0005](docs/adr/0005-auth-bridge-at-the-facade.md) |
 | **Not breaking the old UI** | The new API reproduces the Web API 2 contract, error shapes included — [ADR 0007](docs/adr/0007-same-contract-first.md) |
 | **Respect for the legacy** | Untouched except one endpoint; built on Windows in CI with every Razor view precompiled — [ADR 0002](docs/adr/0002-legacy-left-untouched.md) |
+| **Repository layout** | `legacy/` and the new side in one repo, so a migration step (rule + differential test + route switch) is one commit — [ADR 0009](docs/adr/0009-one-repository-for-both-applications.md) |
 | **Hosting** | IIS on App Service Windows, Azure SQL free offer, Container Apps, all Terraform — [ADR 0008](docs/adr/0008-hosting-and-local-development.md) |
 
 ## Architecture
