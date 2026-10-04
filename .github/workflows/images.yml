@@ -1,0 +1,48 @@
+name: Images
+
+# Builds the two images of the new side (API, facade with the Angular app) on GitHub's amd64 runners and
+# publishes them to GitHub Container Registry, tagged with the commit. The legacy is deployed by azure.sh.
+on:
+  push:
+    branches: [main]
+    paths: [src/**, web/**, Dockerfile, Directory.*.props, global.json, .github/workflows/images.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: images-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  image:
+    name: ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [api, facade]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: tag
+        run: echo "short=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: ${{ matrix.target }}
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/jassbr/comptoir-${{ matrix.target }}:sha-${{ steps.tag.outputs.short }}
+            ghcr.io/jassbr/comptoir-${{ matrix.target }}:latest
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
