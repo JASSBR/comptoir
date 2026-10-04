@@ -8,7 +8,7 @@ A wholesaler's order system (ASP.NET MVC 5, Web API 2, EF6, AngularJS, business 
 route by route behind a YARP facade, with the new pricing **proven equal to the legacy stored procedure** by
 differential tests and every switch backed by shadow traffic.
 
-[**▶ Live demo**](https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io/app/) · [Architecture decisions](docs/adr/README.md) · [Français](#-en-français)
+[**▶ Live demo**](https://comptoir.jassbr.me/app/) · [Architecture decisions](docs/adr/README.md) · [Français](#-en-français)
 
 [![CI](https://github.com/JASSBR/comptoir/actions/workflows/ci.yml/badge.svg)](https://github.com/JASSBR/comptoir/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/JASSBR/comptoir/actions/workflows/codeql.yml/badge.svg)](https://github.com/JASSBR/comptoir/actions/workflows/codeql.yml)
@@ -33,10 +33,10 @@ differential tests and every switch backed by shadow traffic.
 
 ## Try it in 3 minutes
 
-1. Open the [demo](https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io/) and sign in on the **2014 login page** as `sophie` / `comptoir-demo`.
+1. Open the [demo](https://comptoir.jassbr.me/) and sign in on the **2014 login page** as `sophie` / `comptoir-demo`.
 2. You are in the AngularJS application. Open the orders, open one: these reads are in **shadow** mode — the legacy
    answers, and the facade replays them on the new API and compares.
-3. Open [`/app/migration`](https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io/app/migration) (same session, no second login): the plan route by route, and the
+3. Open [`/app/migration`](https://comptoir.jassbr.me/app/migration) (same session, no second login): the plan route by route, and the
    comparisons you just generated, identical or with the JSON path that differs.
 4. Open the **express quote**: choose a customer and 120 sacks of flour — volume discount, free-shipping threshold and
    VAT are computed live by the .NET port. Create the draft: it opens **in the 2014 screen**, which can confirm it
@@ -115,4 +115,4 @@ Comptoir montre la migration d'une application de gestion commerciale de 2014 (.
 Web API 2, EF6, AngularJS, règles métier en procédures stockées) vers .NET 10 et Angular 22, **sans réécriture** :
 une façade YARP bascule les fonctions une par une, la nouvelle tarification est **prouvée identique** à la procédure
 stockée par des tests différentiels, chaque bascule est précédée de trafic en ombre, et les deux applications
-partagent la base pendant la transition. [Essayer la démo](https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io/).
+partagent la base pendant la transition. [Essayer la démo](https://comptoir.jassbr.me/).
