@@ -18,11 +18,12 @@ export interface Loadable {
 }
 
 const RETRY_EVERY_MS = 6_000;
-const MAX_AUTOMATIC_RETRIES = 8;
+// Two minutes in all: a serverless Azure SQL database resumes in up to a minute or two after auto-pause.
+const MAX_AUTOMATIC_RETRIES = 20;
 
 /**
  * Loading and failure, said plainly. The demo runs on free tiers that sleep: the first call after a quiet period can
- * fail while the database and the containers wake up, so a failure is retried by itself for about a minute.
+ * fail while the database and the containers wake up, so a failure is retried by itself for about two minutes.
  */
 @Component({
   selector: 'app-load-state',
@@ -32,7 +33,7 @@ const MAX_AUTOMATIC_RETRIES = 8;
         <strong>Les données ne sont pas encore arrivées.</strong>
         <p>
           Les serveurs de démonstration se mettent en veille quand personne ne les utilise ; ils
-          redémarrent en moins d'une minute.
+          redémarrent en une à deux minutes.
           @if (retries() < max) {
             Nouvel essai automatique dans quelques secondes.
           }
