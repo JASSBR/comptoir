@@ -1,0 +1,95 @@
+<div class="page">
+  <section class="story" aria-label="À propos de cet écran">
+    <a href="/app/" class="brand" aria-label="Comptoir Durand">
+      <span class="seal" aria-hidden="true">CD</span>
+      <span class="name">
+        <strong>Comptoir Durand</strong>
+        <small>Fournitures de boulangerie, Lyon depuis 1987</small>
+      </span>
+    </a>
+
+    <div class="story-body">
+      <span class="badge"><span class="dot"></span>Écran migré</span>
+      <h1>La connexion, passée à .NET 10 sans toucher à l'application de 2014.</h1>
+      <p>
+        Cet écran remplace celui de 2014. Le mot de passe reste vérifié par l'ancienne application :
+        la façade lui transmet le formulaire et rend son cookie de session au navigateur, partagé
+        par les deux applications.
+      </p>
+      <ol class="flow" aria-label="Le parcours d'une connexion">
+        <li><span>1</span>Vous saisissez vos identifiants ici (Angular 22).</li>
+        <li>
+          <span>2</span>La façade .NET 10 les poste au formulaire de 2014, jeton anti-falsification
+          compris.
+        </li>
+        <li>
+          <span>3</span>L'application de 2014 vérifie le mot de passe et émet son cookie, rendu tel
+          quel.
+        </li>
+      </ol>
+      <a class="classic" href="/Account/Login?classic=1"
+        >Voir l'écran de connexion de 2014 <app-icon name="external" [size]="14"
+      /></a>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="title">
+    <form class="card" (submit)="submit($event)" novalidate>
+      <h2 id="title">Connexion</h2>
+      <p class="muted">Gestion commerciale · données fictives</p>
+
+      @if (error(); as message) {
+        <p class="error" role="alert"><app-icon name="alert" [size]="16" /> {{ message }}</p>
+      }
+
+      <label class="field">
+        <span>Identifiant</span>
+        <input
+          id="login"
+          name="login"
+          autocomplete="username"
+          [value]="login()"
+          (input)="login.set($any($event.target).value)"
+        />
+      </label>
+      <label class="field">
+        <span>Mot de passe</span>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          [value]="secret()"
+          (input)="secret.set($any($event.target).value)"
+        />
+      </label>
+
+      <button type="submit" class="button primary submit" [disabled]="pending()">
+        @if (pending()) {
+          <span class="spinner" aria-hidden="true"></span> Connexion…
+        } @else {
+          Se connecter
+        }
+      </button>
+
+      <div class="demo">
+        <p>
+          Comptes de démonstration, mot de passe <code>{{ password }}</code>
+        </p>
+        <div class="accounts">
+          @for (account of accounts; track account.login) {
+            <button
+              type="button"
+              class="account"
+              (click)="pick(account.login)"
+              [attr.data-account]="account.login"
+            >
+              <strong>{{ account.login }}</strong>
+              <small>{{ account.role }}</small>
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

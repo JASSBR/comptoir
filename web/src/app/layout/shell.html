@@ -24,8 +24,17 @@
           <strong>{{ user.displayName }}</strong>
           <small>{{ roleLabel(user.role) }}</small>
         </span>
+        <button
+          type="button"
+          class="button quiet small sign-out"
+          (click)="signOut()"
+          aria-label="Se déconnecter"
+          title="Se déconnecter"
+        >
+          <app-icon name="logout" [size]="18" />
+        </button>
       } @else if (session.checked()) {
-        <a class="button primary small" [href]="loginUrl">Se connecter</a>
+        <a class="button primary small" routerLink="/connexion">Se connecter</a>
       }
     </div>
   </div>

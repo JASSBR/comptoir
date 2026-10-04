@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { Session, legacyLoginUrl } from '../core/session';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Session } from '../core/session';
 import { ThemeService } from '../core/theme';
 import { Icon } from '../shared/icon';
 
@@ -17,7 +17,7 @@ export class Shell {
   protected readonly session = inject(Session);
   protected readonly theme = inject(ThemeService);
   protected readonly repositoryUrl = REPOSITORY;
-  protected readonly loginUrl = legacyLoginUrl('/app/devis');
+  private readonly router = inject(Router);
 
   /** The legacy stores roles as codes; people read them as jobs. */
   protected roleLabel(role: string): string {
@@ -29,5 +29,10 @@ export class Shell {
         >
       )[role] ?? role
     );
+  }
+
+  protected async signOut(): Promise<void> {
+    await this.session.signOut();
+    await this.router.navigate(['/connexion']);
   }
 }

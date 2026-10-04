@@ -17,6 +17,9 @@ public sealed record MigrationRoute
     public RouteMode Mode { get; init; } = RouteMode.Legacy;
     public string Label { get; init; } = "";
     public int Order { get; init; }
+
+    /// <summary>Answered by the facade's own endpoints rather than proxied (the sign-in screen, ADR 0010).</summary>
+    public bool ServedByFacade { get; init; }
 }
 
 public sealed class MigrationOptions

@@ -24,10 +24,10 @@ describe('Shell', () => {
     expect(element.querySelectorAll('.tabs a')).toHaveLength(5);
   });
 
-  it('offers to sign in on the legacy page when there is no session', () => {
+  it('offers to sign in on the new screen when there is no session', () => {
     const element = render(null);
     expect(element.querySelector<HTMLAnchorElement>('a.primary')!.getAttribute('href')).toBe(
-      '/Account/Login?ReturnUrl=%2Fapp%2Fdevis',
+      '/connexion',
     );
   });
 });

@@ -13,3 +13,4 @@ Each record captures one decision, the context that forced it, and what it costs
 | [0007](0007-same-contract-first.md) | Same contract first, new endpoints second | Accepted |
 | [0008](0008-hosting-and-local-development.md) | Hosting: IIS for the legacy, containers for the new side | Accepted |
 | [0009](0009-one-repository-for-both-applications.md) | One repository for the legacy and the new application | Accepted |
+| [0010](0010-sign-in-screen-migrated.md) | The sign-in screen migrates; the legacy keeps checking passwords | Accepted |

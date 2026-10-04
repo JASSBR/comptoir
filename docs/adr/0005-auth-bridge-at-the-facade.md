@@ -22,4 +22,4 @@ who calls it, without a second login, and without depending on the Forms ticket 
 - ✅ One login for both systems; the new code never parses legacy cookies.
 - ✅ Signing out on the legacy ends access to the new side within a minute (cache) and five minutes at most (token).
 - ⚠️ The legacy is still the identity provider. Replacing it (OIDC with Entra ID or Keycloak) is a later step, which
-  this design makes local to the facade.
+  this design makes local to the facade. The sign-in **screen** has moved to the new application since (ADR 0010).

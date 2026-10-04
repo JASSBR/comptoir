@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using Comptoir.Facade;
 using Microsoft.Extensions.Options;
 using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -14,6 +15,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<LegacySession>();
+builder.Services.AddSingleton<LegacySignIn>();
 builder.Services.AddSingleton<FacadeTokens>();
 builder.Services.AddSingleton<ShadowLedger>();
 builder.Services.AddSingleton<ShadowWorker>();
@@ -25,7 +27,7 @@ builder.Services.AddHttpClient(ShadowWorker.HttpClientName, client => client.Bas
     .AddServiceDiscovery();
 
 var plan = builder.Configuration.GetSection(MigrationOptions.Section).Get<MigrationOptions>() ?? new MigrationOptions();
-var routes = plan.Routes.Select(route => new RouteConfig
+var routes = plan.Routes.Where(route => !route.ServedByFacade).Select(route => new RouteConfig
 {
     RouteId = route.Id,
     Order = route.Order,
@@ -94,6 +96,49 @@ if (app.Configuration["Web:DevServerUrl"] is not { Length: > 0 })
     app.MapGet("/app/{**path}", (IWebHostEnvironment environment) =>
         TypedResults.PhysicalFile(Path.Combine(environment.WebRootPath, "app", "index.html"), "text/html"));
 }
+
+// Sign-in, migrated (ADR 0010): the new screen at /app/connexion, the legacy still checking the password.
+// The 2014 screen stays one click away (?classic): the migration is shown, not hidden.
+var legacyInvoker = new HttpMessageInvoker(new SocketsHttpHandler { UseProxy = false, AllowAutoRedirect = false, UseCookies = false });
+app.MapGet("/Account/Login", async (HttpContext context, IHttpForwarder forwarder) =>
+{
+    if (context.Request.Query.ContainsKey("classic"))
+    {
+        await forwarder.SendAsync(context, legacyUrl, legacyInvoker);
+        return;
+    }
+
+    var returnUrl = context.Request.Query["ReturnUrl"].ToString();
+    context.Response.Redirect(returnUrl.Length > 0 ? $"/app/connexion?returnUrl={Uri.EscapeDataString(returnUrl)}" : "/app/connexion");
+});
+app.MapPost("/session", async (SignInRequest request, HttpContext context, LegacySignIn signIn, CancellationToken cancellationToken) =>
+{
+    if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrEmpty(request.Password))
+    {
+        return Results.Json(new { message = LegacySignIn.WrongCredentials }, statusCode: StatusCodes.Status401Unauthorized);
+    }
+
+    var result = await signIn.SignInAsync(request.Login.Trim(), request.Password, cancellationToken);
+    if (result is not { } signedIn)
+    {
+        return Results.Json(new { message = LegacySignIn.WrongCredentials }, statusCode: StatusCodes.Status401Unauthorized);
+    }
+
+    context.Response.Cookies.Append(LegacySession.CookieName, signedIn.Cookie, new CookieOptions
+    {
+        // Always Secure: the demo is HTTPS end to end, and browsers accept Secure cookies on localhost.
+        HttpOnly = true,
+        Secure = true,
+        SameSite = SameSiteMode.Lax,
+        Path = "/",
+    });
+    return Results.Ok(signedIn.User);
+});
+app.MapDelete("/session", (HttpContext context) =>
+{
+    context.Response.Cookies.Delete(LegacySession.CookieName, new CookieOptions { Path = "/", HttpOnly = true, Secure = true });
+    return Results.NoContent();
+});
 
 app.MapReverseProxy(proxy =>
 {

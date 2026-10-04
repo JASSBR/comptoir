@@ -13,6 +13,9 @@ namespace Comptoir.Facade.Tests;
 public sealed class FakeServices : IAsyncDisposable
 {
     public const string ValidCookie = "valid-forms-ticket";
+    public const string AntiForgeryCookie = "__RequestVerificationToken";
+    public const string AntiForgeryCookieValue = "cookie-half";
+    public const string AntiForgeryFormValue = "form-half";
     private WebApplication? _legacy;
     private WebApplication? _api;
 
@@ -37,7 +40,33 @@ public sealed class FakeServices : IAsyncDisposable
             await using var gzip = new System.IO.Compression.GZipStream(context.Response.Body, System.IO.Compression.CompressionLevel.Fastest);
             await gzip.WriteAsync("{\"id\":7,\"label\":\"Farine\"}"u8.ToArray());
         });
-        _legacy.MapGet("/Account/Login", () => Results.Text("<title>Connexion - Comptoir Durand</title>", "text/html"));
+        // The 2014 login, as ASP.NET MVC 5 renders it: an anti-forgery pair (hidden field + cookie), then a Forms cookie.
+        _legacy.MapGet("/Account/Login", (HttpContext context) =>
+        {
+            context.Response.Headers.Append("Set-Cookie", $"{AntiForgeryCookie}={AntiForgeryCookieValue}; path=/; HttpOnly");
+            return Results.Text(
+                "<title>Connexion - Comptoir Durand</title><form method=\"post\">" +
+                $"<input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"{AntiForgeryFormValue}\" /></form>",
+                "text/html");
+        });
+        _legacy.MapPost("/Account/Login", async (HttpContext context) =>
+        {
+            var form = await context.Request.ReadFormAsync();
+            var tokens = form["__RequestVerificationToken"] == AntiForgeryFormValue
+                && context.Request.Cookies[AntiForgeryCookie] == AntiForgeryCookieValue;
+            if (!tokens)
+            {
+                return Results.BadRequest();
+            }
+
+            if (form["login"] != "sophie" || form["password"] != "comptoir-demo")
+            {
+                return Results.Text("<div class=\"alert alert-danger\">Identifiant ou mot de passe incorrect.</div>", "text/html");
+            }
+
+            context.Response.Headers.Append("Set-Cookie", $".COMPTOIRAUTH={ValidCookie}; path=/; HttpOnly");
+            return Results.Redirect("/");
+        });
         LegacyUrl = await StartAsync(_legacy);
 
         _api = Create();

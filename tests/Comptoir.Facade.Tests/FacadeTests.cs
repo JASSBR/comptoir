@@ -30,8 +30,58 @@ public sealed class FacadeTests : IAsyncLifetime
     [Fact]
     public async Task LegacyRoutes_AreProxiedToTheLegacyApplication()
     {
-        var page = await _facade.CreateClient().GetStringAsync("/Account/Login", TestContext.Current.CancellationToken);
+        // The 2014 sign-in screen stays reachable on purpose (?classic): the migration is shown, not hidden.
+        var page = await _facade.CreateClient().GetStringAsync("/Account/Login?classic=1", TestContext.Current.CancellationToken);
         page.ShouldContain("Connexion - Comptoir Durand");
+    }
+
+    [Fact]
+    public async Task TheLoginScreen_IsServedByTheNewApplication_KeepingWhereTheUserWasGoing()
+    {
+        var client = _facade.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+        var response = await client.GetAsync("/Account/Login?ReturnUrl=%2f%23!%2fcommandes", TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Redirect);
+        response.Headers.Location!.OriginalString.ShouldBe("/app/connexion?returnUrl=%2F%23%21%2Fcommandes");
+    }
+
+    [Fact]
+    public async Task SigningIn_GoesThroughTheLegacy_AndHandsItsCookieToTheBrowser()
+    {
+        var client = _facade.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.PostAsJsonAsync("/session", new { login = "sophie", password = "comptoir-demo" }, TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var user = await response.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
+        user.GetProperty("displayName").GetString().ShouldBe("Sophie Moreau");
+        var cookie = response.Headers.GetValues("Set-Cookie").ShouldHaveSingleItem();
+        cookie.ShouldStartWith($".COMPTOIRAUTH={FakeServices.ValidCookie};");
+        cookie.ShouldContain("httponly");
+        cookie.ShouldContain("samesite=lax");
+    }
+
+    [Fact]
+    public async Task WrongCredentials_AreRefusedWithTheLegacyMessage_AndNoCookie()
+    {
+        var client = _facade.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.PostAsJsonAsync("/session", new { login = "sophie", password = "wrong" }, TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        (await response.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken)).GetProperty("message").GetString()
+            .ShouldBe("Identifiant ou mot de passe incorrect.");
+        response.Headers.Contains("Set-Cookie").ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task SigningOut_ExpiresTheCookie()
+    {
+        var response = await SignedIn().DeleteAsync("/session", TestContext.Current.CancellationToken);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        response.Headers.GetValues("Set-Cookie").ShouldHaveSingleItem().ShouldContain("expires=Thu, 01 Jan 1970");
     }
 
     [Fact]

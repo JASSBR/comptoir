@@ -18,14 +18,15 @@ public sealed class LegacySession(IHttpClientFactory clients, IMemoryCache cache
     public const string HttpClientName = "legacy-session";
     private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(1);
 
-    public async Task<LegacyUser?> ResolveAsync(HttpRequest request, CancellationToken cancellationToken)
+    public Task<LegacyUser?> ResolveAsync(HttpRequest request, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(request);
         var cookie = request.Cookies[CookieName];
-        if (string.IsNullOrEmpty(cookie))
-        {
-            return null;
-        }
+        return string.IsNullOrEmpty(cookie) ? Task.FromResult<LegacyUser?>(null) : ResolveCookieAsync(cookie, cancellationToken);
+    }
 
+    public async Task<LegacyUser?> ResolveCookieAsync(string cookie, CancellationToken cancellationToken)
+    {
         var key = "session:" + Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(cookie)));
         if (cache.TryGetValue(key, out LegacyUser? cached))
         {

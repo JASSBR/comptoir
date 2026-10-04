@@ -33,7 +33,9 @@ differential tests and every switch backed by shadow traffic.
 
 ## Try it in 3 minutes
 
-1. Open the [demo](https://comptoir.jassbr.me/) and sign in on the **2014 login page** as `sophie` / `comptoir-demo`.
+1. Open the [demo](https://comptoir.jassbr.me/) and sign in as `sophie` / `comptoir-demo` on the **new sign-in screen**:
+   the password is still checked by the 2014 application, through the facade ([ADR 0010](docs/adr/0010-sign-in-screen-migrated.md)).
+   Its old screen is one click away.
 2. You are in the AngularJS application. Open the orders, open one: these reads are in **shadow** mode — the legacy
    answers, and the facade replays them on the new API and compares.
 3. Open [`/app/migration`](https://comptoir.jassbr.me/app/migration) (same session, no second login): the plan route by route, and the
@@ -52,7 +54,7 @@ differential tests and every switch backed by shadow traffic.
 | **Incremental migration** | [`Comptoir.Facade`](src/Comptoir.Facade): per-route `Legacy` / `Shadow` / `New` modes from configuration — [ADR 0001](docs/adr/0001-strangler-fig-not-rewrite.md) |
 | **Evidence before switching** | Shadow replay with semantic JSON diff, bounded queue, live dashboard — [ADR 0006](docs/adr/0006-shadow-traffic-before-switching.md) |
 | **Two systems, one database** | The confirmation port keeps the procedure's lock hints; tested by legacy and new confirmations racing — [ADR 0003](docs/adr/0003-shared-database-during-transition.md) |
-| **Identity during a migration** | Forms cookie → 5-minute JWT at the facade, legacy cookie stripped — [ADR 0005](docs/adr/0005-auth-bridge-at-the-facade.md) |
+| **Identity during a migration** | Forms cookie → 5-minute JWT at the facade, legacy cookie stripped — [ADR 0005](docs/adr/0005-auth-bridge-at-the-facade.md); sign-in screen migrated, password still checked by the legacy — [ADR 0010](docs/adr/0010-sign-in-screen-migrated.md) |
 | **Not breaking the old UI** | The new API reproduces the Web API 2 contract, error shapes included — [ADR 0007](docs/adr/0007-same-contract-first.md) |
 | **Respect for the legacy** | Untouched except one endpoint; built on Windows in CI with every Razor view precompiled — [ADR 0002](docs/adr/0002-legacy-left-untouched.md) |
 | **Repository layout** | `legacy/` and the new side in one repo, so a migration step (rule + differential test + route switch) is one commit — [ADR 0009](docs/adr/0009-one-repository-for-both-applications.md) |

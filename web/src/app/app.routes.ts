@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: 'connexion',
+    title: 'Connexion · Comptoir Durand',
+    loadComponent: () => import('./pages/login/login').then((m) => m.Login),
+  },
+  {
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     children: [
