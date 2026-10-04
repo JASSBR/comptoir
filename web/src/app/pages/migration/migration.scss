@@ -1,139 +1,327 @@
 :host {
   display: grid;
-  gap: 1.75rem;
+  gap: 1rem;
 }
 .page-header {
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
 }
 
-/* The three copies of the pad, slightly fanned like a book of carbons. */
+/* ---------- Headline: how far the strangler fig has grown ---------- */
+.progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(15rem, 1fr);
+  gap: 1rem;
+  padding: 1.5rem 1.6rem;
+  border-radius: 20px;
+  color: var(--on-charcoal);
+  background:
+    radial-gradient(
+      70% 120% at 100% 0%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      60% 100% at 0% 100%,
+      color-mix(in srgb, var(--new) 16%, transparent),
+      transparent 60%
+    ),
+    var(--charcoal);
+  box-shadow: var(--shadow-lg);
+  animation: rise 0.3s ease-out;
+}
+.progress-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--on-charcoal-muted);
+}
+.progress-main {
+  display: grid;
+  gap: 0.35rem;
+}
+.progress-figure {
+  font-family: var(--display);
+  font-size: clamp(3rem, 7vw, 4.4rem);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+.bar {
+  display: flex;
+  gap: 4px;
+  height: 10px;
+  margin-top: 0.8rem;
+}
+.bar span {
+  flex-basis: 0;
+  min-width: 4px;
+  border-radius: 999px;
+  transition: flex-grow 0.6s ease;
+}
+.bar [data-mode='New'],
+.bar-legend [data-mode='New'] .dot {
+  background: var(--new);
+}
+.bar [data-mode='Shadow'],
+.bar-legend [data-mode='Shadow'] .dot {
+  background: var(--shadow-mode);
+}
+.bar [data-mode='Legacy'],
+.bar-legend [data-mode='Legacy'] .dot {
+  background: #6f7d92;
+}
+.bar-legend {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  font-size: 0.82rem;
+  color: var(--on-charcoal-muted);
+}
+.bar-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.bar-legend b {
+  color: var(--on-charcoal);
+  font-weight: 600;
+}
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+.progress-side {
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+  padding: 1.1rem 1.15rem;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid rgb(255 255 255 / 8%);
+}
+.side-figure {
+  font-family: var(--display);
+  font-size: 2.1rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  color: #7ee8da;
+}
+.progress-side small {
+  font-size: 0.8rem;
+  color: var(--on-charcoal-muted);
+}
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.76rem;
+  color: var(--on-charcoal-muted);
+}
+.pulse {
+  position: relative;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--new);
+}
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--new);
+  opacity: 0;
+  animation: ripple 2.4s ease-out infinite;
+}
+@keyframes ripple {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+/* ---------- The three states, one column each ---------- */
 .copies {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 .copy {
-  padding: 1.25rem 1.25rem 1rem;
-  border: 1px solid var(--rule);
+  --mode: var(--accent);
+  --mode-soft: var(--accent-soft);
+  padding: 1.15rem 1.2rem;
   border-radius: var(--radius);
-  background: var(--sheet);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 .copy[data-mode='New'] {
-  border-top: 5px solid var(--ink);
-  transform: rotate(-0.6deg);
+  --mode: var(--new);
+  --mode-soft: var(--new-soft);
 }
 .copy[data-mode='Shadow'] {
-  background: var(--carbon-yellow-soft);
-  transform: rotate(0.4deg);
+  --mode: var(--shadow-mode);
+  --mode-soft: var(--shadow-mode-soft);
 }
 .copy[data-mode='Legacy'] {
-  background: var(--carbon-pink-soft);
-  transform: rotate(-0.3deg);
+  --mode: var(--legacy);
+  --mode-soft: var(--legacy-soft);
 }
 .copy header {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--rule-strong);
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
 }
 .count {
-  font-size: 3.6rem;
-  line-height: 0.85;
-  min-width: 2.2ch;
-}
-.copy[data-mode='New'] .count {
-  color: var(--ink);
-}
-.copy h2 {
+  display: grid;
+  place-items: center;
+  min-width: 2.6rem;
+  height: 2.6rem;
+  padding: 0 0.4rem;
+  border-radius: 12px;
+  background: var(--mode-soft);
+  color: var(--mode);
   font-size: 1.35rem;
 }
+.copy h2 {
+  font-size: 1rem;
+}
 .copy header p {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--muted);
 }
 .copy ul {
-  margin: 0.75rem 0 0;
-  padding: 0;
   list-style: none;
-  display: grid;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.35rem;
-  font-size: 0.92rem;
 }
-/* Ruled lines of the copy. */
 .copy li {
-  padding-bottom: 0.35rem;
-  border-bottom: 1px dotted var(--rule-strong);
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
 }
 .copy li.empty {
-  color: var(--muted);
+  color: var(--faint);
+  background: transparent;
+  border-style: dashed;
 }
 
+/* ---------- The plan, route by route ---------- */
 .table-wrap {
   overflow-x: auto;
 }
 .label {
-  font-weight: 500;
+  font-weight: 600;
 }
 .call {
-  font-size: 0.82rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
   color: var(--muted);
   white-space: nowrap;
 }
-td .stamp {
+.verb {
+  display: inline-block;
+  padding: 0.05rem 0.4rem;
+  margin-right: 0.25rem;
+  border-radius: 5px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-weight: 500;
+}
+td.num {
   font-size: 0.85rem;
+  color: var(--muted);
 }
 .differs {
-  color: var(--stamp-red);
+  color: var(--danger) !important;
   font-weight: 600;
 }
 .refresh {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 
+/* ---------- Comparison log ---------- */
 .comparison {
   display: grid;
-  grid-template-columns: 5.5rem minmax(0, 1fr) auto;
-  gap: 1rem;
-  align-items: baseline;
-  padding: 0.7rem 0;
-  border-bottom: 1px solid var(--rule);
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: start;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+}
+.comparison:first-of-type {
+  border-top: 0;
 }
 .comparison time {
-  font-family: var(--display);
-  font-weight: 600;
-  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--faint);
+  padding-top: 0.1rem;
 }
 .outcome {
-  color: var(--ok);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 0.25rem;
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
 }
-[data-outcome='Mismatch'] .outcome,
-[data-outcome='Error'] .outcome {
-  color: var(--stamp-red);
+.comparison[data-outcome='Mismatch'] .outcome {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 11%, transparent);
+}
+.comparison[data-outcome='Error'] .outcome {
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 13%, transparent);
+}
+.comparison .call {
+  white-space: normal;
 }
 .difference {
-  margin-top: 0.25rem;
-  font-size: 0.85rem;
-  color: var(--stamp-red);
+  margin-top: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--danger) 6%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--danger) 18%, transparent);
+  font-family: var(--mono);
+  font-size: 0.78rem;
 }
 .timing {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 .empty-journal {
-  padding-top: 0.75rem;
+  padding: 0.5rem 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 860px) {
+  .progress,
   .copies {
     grid-template-columns: 1fr;
   }
-  .copy {
-    transform: none !important;
-  }
   .comparison {
-    grid-template-columns: 4.5rem minmax(0, 1fr);
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
   }
   .timing {
-    grid-column: 2;
+    white-space: normal;
   }
 }

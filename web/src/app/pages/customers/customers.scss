@@ -6,22 +6,26 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--graphite);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
 }
 .letter {
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
-  font-size: 2rem;
-  color: var(--ink);
-  border: 2.5px solid var(--ink);
-  border-radius: 50%;
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.35rem;
+  border-radius: 12px;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.tier[data-tier='B'] .letter {
+  color: var(--new);
+  background: var(--new-soft);
 }
 .tier[data-tier='C'] .letter {
-  color: var(--muted);
-  border-color: var(--rule-strong);
+  color: var(--legacy);
+  background: var(--legacy-soft);
 }
 ul {
   margin: 0;

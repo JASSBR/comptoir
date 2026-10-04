@@ -2,9 +2,18 @@
   min-width: min(100%, 20rem);
 }
 .list h2 {
-  margin: 1.5rem 0 0.25rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 2px solid var(--graphite);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.6rem 0 0.35rem;
+  font-size: 0.95rem;
+}
+.list h2::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 2px;
+  background: var(--accent);
 }
 .list h2:first-child {
   margin-top: 0;
@@ -31,14 +40,16 @@
   font-weight: 500;
 }
 .sku {
-  font-size: 0.82rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
 }
 .stock {
-  font-size: 0.85rem;
-  color: var(--ok);
+  font-size: 0.82rem;
+  color: var(--success);
 }
 .stock.low {
-  color: var(--stamp-red);
+  color: var(--danger);
   font-weight: 600;
 }
 .price {

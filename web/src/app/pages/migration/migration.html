@@ -9,6 +9,36 @@
   </div>
 </header>
 
+<section class="progress" aria-label="Avancement de la migration">
+  <div class="progress-main">
+    <span class="progress-label">Fonctions servies par .NET 10</span>
+    <strong class="progress-figure">{{ progress().migrated | percent: '1.0-0' }}</strong>
+    <div class="bar" aria-hidden="true">
+      @for (part of progress().shares; track part.mode) {
+        <span [attr.data-mode]="part.mode" [style.flex-grow]="part.share"></span>
+      }
+    </div>
+    <ul class="bar-legend">
+      @for (copy of copies(); track copy.mode) {
+        <li [attr.data-mode]="copy.mode">
+          <span class="dot"></span>{{ copy.title }} <b>{{ copy.routes.length }}</b>
+        </li>
+      }
+    </ul>
+  </div>
+  <div class="progress-side">
+    <span class="progress-label">Contrôle en ombre</span>
+    @if (progress().agreement; as agreement) {
+      <strong class="side-figure">{{ agreement | percent: '1.1-1' }}</strong>
+      <small>de réponses identiques sur {{ progress().compared }} comparaisons</small>
+    } @else {
+      <strong class="side-figure">—</strong>
+      <small>aucune comparaison pour l'instant</small>
+    }
+    <span class="live"><span class="pulse"></span>Mis à jour toutes les 5 s</span>
+  </div>
+</section>
+
 <section class="copies" aria-label="Répartition des fonctions">
   @for (copy of copies(); track copy.mode) {
     <article class="copy" [attr.data-mode]="copy.mode">
@@ -51,7 +81,9 @@
         @for (route of routes(); track route.id) {
           <tr [attr.data-route]="route.id">
             <td class="label">{{ route.label }}</td>
-            <td class="call">{{ route.methods.join(', ') }} {{ route.path }}</td>
+            <td class="call">
+              <span class="verb">{{ route.methods.join(', ') }}</span> {{ route.path }}
+            </td>
             <td>
               <span class="stamp" [attr.data-mode]="route.mode">{{ modeLabels[route.mode] }}</span>
             </td>

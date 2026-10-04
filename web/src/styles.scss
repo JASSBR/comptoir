@@ -1,58 +1,100 @@
-@use '@fontsource/barlow-condensed/500.css' as barlowcondensed-500;
-@use '@fontsource/barlow-condensed/600.css' as barlowcondensed-600;
-@use '@fontsource/barlow-condensed/700.css' as barlowcondensed-700;
+@use '@fontsource-variable/space-grotesk/wght.css' as space-grotesk;
 @use '@fontsource/ibm-plex-sans/400.css' as ibmplexsans-400;
 @use '@fontsource/ibm-plex-sans/500.css' as ibmplexsans-500;
 @use '@fontsource/ibm-plex-sans/600.css' as ibmplexsans-600;
+@use '@fontsource/ibm-plex-mono/400.css' as ibmplexmono-400;
+@use '@fontsource/ibm-plex-mono/500.css' as ibmplexmono-500;
 
 /*
- * Comptoir — "the triplicate order pad".
- * A wholesaler's counter runs on carbon-copy order books: the white original, the yellow and the pink copies,
- * filled in with a blue ballpoint and stamped. The migration reads the same way:
- *   blue ink = the new application, yellow copy = being checked (shadow), pink copy = still the 2014 application.
+ * Comptoir — "the trade counter, rebuilt".
+ * A wholesaler's back office, the way modern B2B tools look: a charcoal header, cool neutral surfaces,
+ * one signal orange for what you can do, and figures in a geometric grotesk. The migration has its own three
+ * colours, used everywhere a route appears: teal = already .NET 10, violet = being compared, slate = still 2014.
  */
 :root {
-  --paper: #eef1f6;
-  --sheet: #ffffff;
-  --graphite: #1c2230;
-  --muted: #5b6478;
-  --rule: #d6dce8;
-  --rule-strong: #b8c1d3;
-  --ink: #2742c8;
-  --ink-strong: #1a2f96;
-  --ink-soft: #e6eafb;
-  --carbon-yellow: #ffe36e;
-  --carbon-yellow-soft: #fff4c2;
-  --carbon-pink: #f7c7d3;
-  --carbon-pink-soft: #fce6ec;
-  --stamp-red: #c8322f;
-  --ok: #1f7a4d;
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --surface-2: #eef0f3;
+  --border: #e1e4e9;
+  --border-strong: #c9ced6;
+  --text: #121417;
+  --muted: #5f6672;
+  --faint: #9aa1ac;
 
-  --display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --charcoal: #15171b;
+  --charcoal-2: #1f2228;
+  --on-charcoal: #f2f3f5;
+  --on-charcoal-muted: rgb(242 243 245 / 60%);
+
+  --accent: #f0560a;
+  --accent-strong: #d24704;
+  --accent-soft: #fff0e8;
+  --on-accent: #ffffff;
+
+  --new: #0f9f8f;
+  --new-soft: #e3f6f3;
+  --shadow-mode: #7357ff;
+  --shadow-mode-soft: #eeebff;
+  --legacy: #64748b;
+  --legacy-soft: #edf0f4;
+
+  --danger: #dc3b36;
+  --success: #12965f;
+  --warning: #c27a06;
+
+  --display: 'Space Grotesk Variable', 'IBM Plex Sans', system-ui, sans-serif;
   --body: 'IBM Plex Sans', system-ui, sans-serif;
-  --radius: 6px;
-  --focus: 0 0 0 3px color-mix(in srgb, var(--ink) 35%, transparent);
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgb(18 20 23 / 5%), 0 1px 3px rgb(18 20 23 / 4%);
+  --shadow-lg: 0 22px 44px -22px rgb(18 20 23 / 30%), 0 2px 6px rgb(18 20 23 / 5%);
+  --focus: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+
+  /* Names kept from the previous theme: pages refer to them. */
+  --paper: var(--bg);
+  --sheet: var(--surface);
+  --graphite: var(--text);
+  --rule: var(--border);
+  --rule-strong: var(--border-strong);
+  --ink: var(--accent);
+  --ink-strong: var(--accent-strong);
+  --ink-soft: var(--accent-soft);
+  --stamp-red: var(--danger);
+  --ok: var(--success);
+  --carbon-yellow-soft: var(--shadow-mode-soft);
+  --carbon-pink: var(--legacy);
+  --carbon-pink-soft: var(--legacy-soft);
 
   color-scheme: light;
 }
 
-/* Night shift: the same pad under a desk lamp. */
 :root[data-theme='dark'] {
-  --paper: #0d1430;
-  --sheet: #151f47;
-  --graphite: #e8ecf8;
-  --muted: #9aa6c6;
-  --rule: #26336a;
-  --rule-strong: #34458a;
-  --ink: #8ea4ff;
-  --ink-strong: #b6c4ff;
-  --ink-soft: #1f2c63;
-  --carbon-yellow: #e9c84a;
-  --carbon-yellow-soft: #3a3417;
-  --carbon-pink: #e79bb0;
-  --carbon-pink-soft: #3d2130;
-  --stamp-red: #ff7a72;
-  --ok: #57c48c;
+  --bg: #0d0f12;
+  --surface: #15181d;
+  --surface-2: #1c2026;
+  --border: #272c34;
+  --border-strong: #363c46;
+  --text: #eceef1;
+  --muted: #98a0ac;
+  --faint: #636b77;
+  --charcoal: #08090b;
+  --charcoal-2: #121418;
+  --accent: #ff7a3d;
+  --accent-strong: #ff9764;
+  --accent-soft: #2e1a10;
+  --on-accent: #120a05;
+  --new: #3fd1bf;
+  --new-soft: #10302c;
+  --shadow-mode: #a593ff;
+  --shadow-mode-soft: #221d40;
+  --legacy: #98a6ba;
+  --legacy-soft: #20262f;
+  --danger: #ff6b66;
+  --success: #43cf92;
+  --warning: #f0b046;
+  --shadow: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-lg: 0 22px 44px -18px rgb(0 0 0 / 75%);
   color-scheme: dark;
 }
 
@@ -69,10 +111,10 @@ body {
 }
 
 body {
-  background: var(--paper);
-  color: var(--graphite);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--body);
-  font-size: 15px;
+  font-size: 14.5px;
   line-height: 1.55;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
@@ -82,30 +124,35 @@ h1,
 h2,
 h3 {
   font-family: var(--display);
-  font-weight: 700;
-  line-height: 1.05;
+  font-weight: 650;
+  line-height: 1.1;
   margin: 0;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.025em;
 }
 h1 {
-  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  font-size: clamp(1.8rem, 3.4vw, 2.4rem);
+  letter-spacing: -0.04em;
 }
 h2 {
-  font-size: 1.55rem;
+  font-size: 1.1rem;
 }
 h3 {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 p {
   margin: 0;
 }
 a {
-  color: var(--ink);
+  color: var(--accent);
+  text-underline-offset: 3px;
 }
 :focus-visible {
   outline: none;
   box-shadow: var(--focus);
-  border-radius: 3px;
+  border-radius: 6px;
+}
+::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* ---------- Page structure ---------- */
@@ -116,94 +163,79 @@ a {
   align-items: flex-end;
   justify-content: space-between;
   gap: 1rem 2rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 .lede {
-  max-width: 62ch;
-  margin-top: 0.6rem;
+  max-width: 66ch;
+  margin-top: 0.55rem;
   color: var(--muted);
 }
 .muted {
   color: var(--muted);
 }
 
-/* A sheet of paper. The main sheet of a page shows the yellow and pink copies beneath it. */
+/* A panel. ("sheet" and "triplicate" are the old theme's names; the copies are gone.) */
 .sheet {
   position: relative;
-  background: var(--sheet);
-  border: 1px solid var(--rule);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.5rem;
-}
-.sheet.triplicate {
-  margin: 0 10px 14px 0;
-  box-shadow:
-    5px 6px 0 -1px var(--carbon-yellow-soft),
-    5px 6px 0 0 var(--rule),
-    10px 12px 0 -1px var(--carbon-pink-soft),
-    10px 12px 0 0 var(--rule);
+  padding: 1.35rem;
+  box-shadow: var(--shadow);
 }
 .sheet + .sheet {
-  margin-top: 1.25rem;
+  margin-top: 1rem;
 }
 .sheet-title {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-bottom: 0.75rem;
-  margin-bottom: 0.25rem;
-  border-bottom: 2px solid var(--graphite);
+  margin-bottom: 1rem;
 }
 
-/* ---------- Rubber stamps (the one loud thing) ---------- */
+/* ---------- Migration mode pill (was a rubber stamp) ---------- */
 
 .stamp {
-  display: inline-block;
-  padding: 0.12rem 0.55rem 0.05rem;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stamp-color, var(--ink));
-  border: 2.5px solid currentColor;
-  border-radius: 4px;
-  outline: 1px solid currentColor;
-  outline-offset: 2px;
-  transform: rotate(-4deg);
+  --stamp-color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
   white-space: nowrap;
-  /* Uneven ink: a stamp never prints perfectly. */
-  mask-image: repeating-radial-gradient(circle at 30% 40%, #000 0 2px, rgb(0 0 0 / 82%) 2px 3px);
+  color: var(--stamp-color);
+  background: color-mix(in srgb, var(--stamp-color) 12%, transparent);
+}
+.stamp::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
 }
 .stamp[data-mode='New'] {
-  --stamp-color: var(--ink);
+  --stamp-color: var(--new);
 }
 .stamp[data-mode='Shadow'] {
-  --stamp-color: #9a7400;
-  background: var(--carbon-yellow-soft);
+  --stamp-color: var(--shadow-mode);
 }
 .stamp[data-mode='Legacy'] {
-  --stamp-color: #a3304e;
-  background: var(--carbon-pink-soft);
-}
-:root[data-theme='dark'] .stamp[data-mode='Shadow'] {
-  --stamp-color: var(--carbon-yellow);
-}
-:root[data-theme='dark'] .stamp[data-mode='Legacy'] {
-  --stamp-color: var(--carbon-pink);
+  --stamp-color: var(--legacy);
 }
 
-/* ---------- Form fields: written on the line, like a paper form ---------- */
+/* ---------- Form fields ---------- */
 
 .field {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.35rem;
 }
 .field > span {
   font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--muted);
+  font-weight: 600;
+  color: var(--text);
 }
 input,
 select,
@@ -211,19 +243,25 @@ textarea {
   width: 100%;
   font: inherit;
   color: inherit;
-  background: transparent;
-  border: 0;
-  border-bottom: 1.5px solid var(--rule-strong);
-  border-radius: 0;
-  padding: 0.45rem 0.1rem;
-  transition: border-color 0.15s;
+  padding: 0.58rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--border-strong);
 }
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-bottom-color: var(--ink);
-  box-shadow: 0 1px 0 0 var(--ink);
+  border-color: var(--accent);
+  box-shadow: var(--focus);
 }
 select {
   cursor: pointer;
@@ -237,64 +275,86 @@ button.button {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.6rem 1.1rem;
+  padding: 0.56rem 1.05rem;
   font: inherit;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: var(--ink);
-  background: transparent;
-  border: 1.5px solid var(--ink);
-  border-radius: var(--radius);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  transition:
+    transform 0.12s,
+    background-color 0.15s,
+    border-color 0.15s;
 }
 .button:hover:not(:disabled) {
-  background: var(--ink-soft);
+  border-color: var(--border-strong);
+}
+.button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 .button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 .button.primary {
-  color: #fff;
-  background: var(--ink);
+  color: var(--on-accent);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 20%) inset,
+    0 6px 16px -8px color-mix(in srgb, var(--accent) 80%, transparent);
 }
 .button.primary:hover:not(:disabled) {
-  background: var(--ink-strong);
-  border-color: var(--ink-strong);
-}
-:root[data-theme='dark'] .button.primary {
-  color: var(--paper);
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
 }
 .button.quiet {
+  background: transparent;
   border-color: transparent;
+  box-shadow: none;
+}
+.button.quiet:hover:not(:disabled) {
+  background: var(--surface-2);
 }
 .button.small {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.85rem;
+  padding: 0.36rem 0.7rem;
+  font-size: 0.82rem;
 }
 
-/* ---------- Tables: a ledger page ---------- */
+/* ---------- Tables ---------- */
 
 table {
   width: 100%;
   border-collapse: collapse;
 }
 th {
-  font-family: var(--display);
+  font-size: 0.76rem;
   font-weight: 600;
-  font-size: 1rem;
   text-align: left;
-  padding: 0.6rem 0.75rem;
-  border-bottom: 2px solid var(--graphite);
+  color: var(--muted);
+  padding: 0.65rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 td {
-  padding: 0.7rem 0.75rem;
-  border-bottom: 1px solid var(--rule);
+  padding: 0.75rem 0.8rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
   vertical-align: middle;
 }
+tbody tr {
+  transition: background-color 0.12s;
+}
 tbody tr:hover {
-  background: color-mix(in srgb, var(--ink-soft) 55%, transparent);
+  background: color-mix(in srgb, var(--surface-2) 70%, transparent);
+}
+tbody tr:last-child td {
+  border-bottom: 0;
 }
 .num {
   text-align: right;
@@ -302,33 +362,50 @@ tbody tr:hover {
 .figure {
   font-family: var(--display);
   font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.code {
+  font-family: var(--mono);
+  font-size: 0.86em;
 }
 
 /* ---------- Notes, states ---------- */
 
 .note {
-  padding: 0.75rem 1rem;
-  border-left: 3px solid var(--ink);
-  background: var(--ink-soft);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  background: var(--accent-soft);
 }
 .note.warning {
-  border-color: #b98a00;
-  background: var(--carbon-yellow-soft);
+  border-color: color-mix(in srgb, var(--warning) 30%, transparent);
+  background: color-mix(in srgb, var(--warning) 9%, var(--surface));
 }
 .note.error {
-  border-color: var(--stamp-red);
-  background: var(--carbon-pink-soft);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+  background: color-mix(in srgb, var(--danger) 7%, var(--surface));
+  color: var(--danger);
 }
 .skeleton {
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--rule) 25%, var(--paper) 50%, var(--rule) 75%);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--surface) 50%,
+    var(--surface-2) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
 @keyframes shimmer {
   to {
     background-position: -200% 0;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
 }
 

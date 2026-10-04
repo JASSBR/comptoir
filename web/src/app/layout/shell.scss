@@ -5,118 +5,152 @@
 }
 .inner {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
   padding-inline: clamp(1rem, 3vw, 2rem);
 }
 
-/* The top of an order form: the house name, and the tabs of the binder. */
+/* A charcoal bar across the top: the house name, the account, then the sections as pill tabs. */
 .masthead {
-  background: var(--sheet);
-  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--charcoal);
+  color: var(--on-charcoal);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 6%) inset;
 }
 .masthead > .inner:first-child {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-block: 1rem 0.75rem;
+  padding-block: 0.85rem 0.6rem;
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.75rem;
   color: inherit;
   text-decoration: none;
 }
 .seal {
   display: grid;
   place-items: center;
-  width: 2.6rem;
-  height: 2.6rem;
-  border: 2.5px solid var(--ink);
-  outline: 1px solid var(--ink);
-  outline-offset: 2px;
-  border-radius: 50%;
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
   font-family: var(--display);
   font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--ink);
-  transform: rotate(-8deg);
+  font-size: 0.9rem;
+  letter-spacing: -0.04em;
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--accent) 80%, transparent);
 }
 .name {
   display: grid;
-  line-height: 1.15;
+  line-height: 1.2;
 }
 .name strong {
   font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.45rem;
+  font-weight: 650;
+  font-size: 1.12rem;
+  letter-spacing: -0.03em;
 }
-.name small,
-.user small {
-  font-size: 0.78rem;
-  color: var(--muted);
+.name small {
+  font-size: 0.74rem;
+  color: var(--on-charcoal-muted);
 }
 .account {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
+}
+.account .button.quiet {
+  color: var(--on-charcoal);
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 999px;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
+}
+.account .button.quiet:hover:not(:disabled) {
+  background: rgb(255 255 255 / 8%);
 }
 .user {
   display: grid;
   text-align: right;
   line-height: 1.2;
+  padding-left: 0.75rem;
+  border-left: 1px solid rgb(255 255 255 / 12%);
+}
+.user strong {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.user small {
+  font-size: 0.74rem;
+  color: var(--on-charcoal-muted);
 }
 
 .tabs {
   display: flex;
   gap: 0.25rem;
+  padding-block: 0.15rem 0.7rem;
   overflow-x: auto;
 }
 .tabs a {
-  padding: 0.55rem 0.9rem 0.6rem;
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--muted);
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
-}
-.tabs a:hover {
-  color: var(--graphite);
-}
-.tabs a.active {
-  color: var(--ink);
-  border-bottom-color: var(--ink);
-}
-.tabs .legacy {
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: #a3304e;
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  font-weight: 550;
+  font-size: 0.88rem;
+  color: var(--on-charcoal-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
 }
-:host-context([data-theme='dark']) .tabs .legacy {
-  color: var(--carbon-pink);
+.tabs a:hover {
+  color: var(--on-charcoal);
+  background: rgb(255 255 255 / 6%);
+}
+.tabs a.active {
+  color: var(--charcoal);
+  background: var(--on-charcoal);
+}
+/* The way back to 2014, in the legacy colour. */
+.tabs .legacy {
+  margin-left: auto;
+  color: #b8c3d4;
+  border: 1px dashed rgb(255 255 255 / 18%);
 }
 
 .content {
   flex: 1;
   padding-block: 2rem 3rem;
+  animation: rise 0.25s ease-out;
 }
 .footer {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1.5rem;
   padding-block: 1.25rem 2rem;
-  border-top: 1px dashed var(--rule-strong);
-  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.84rem;
   color: var(--muted);
 }
 .footer span {
   margin-right: auto;
+}
+.footer a {
+  color: var(--muted);
+}
+.footer a:hover {
+  color: var(--accent);
 }
 
 @media (max-width: 640px) {

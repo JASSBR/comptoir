@@ -1,4 +1,4 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, PercentPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
 import { MigrationRoute, MigrationStatus, RouteMode } from '../../models';
@@ -21,7 +21,7 @@ interface Copy {
 
 @Component({
   selector: 'app-migration',
-  imports: [DatePipe, DecimalPipe, LoadState],
+  imports: [DatePipe, DecimalPipe, PercentPipe, LoadState],
   templateUrl: './migration.html',
   styleUrl: './migration.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +58,24 @@ export class Migration {
         routes: of('Legacy'),
       },
     ];
+  });
+
+  /** The headline: how far along the strangler fig is, and how often the new code agrees with the old. */
+  protected readonly progress = computed(() => {
+    const routes = this.routes();
+    const total = routes.length || 1;
+    const count = (mode: RouteMode) => routes.filter((route) => route.mode === mode).length;
+    const compared = routes.reduce((sum, route) => sum + route.shadow.total, 0);
+    const identical = routes.reduce((sum, route) => sum + route.shadow.matches, 0);
+    return {
+      migrated: count('New') / total,
+      shares: (['New', 'Shadow', 'Legacy'] as const).map((mode) => ({
+        mode,
+        share: count(mode) / total,
+      })),
+      compared,
+      agreement: compared === 0 ? null : identical / compared,
+    };
   });
 
   constructor() {
