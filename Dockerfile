@@ -4,18 +4,21 @@
 #   docker build --target facade -t comptoir-facade .     (embeds the Angular application under /app)
 # Add --platform linux/amd64 on Apple Silicon for cloud targets.
 
-FROM node:24-alpine AS web
+# Both build stages run on the build machine's own architecture: their output is portable (static files,
+# framework-dependent DLLs), and under amd64 emulation on Apple Silicon the build took the better part of an hour.
+FROM --platform=$BUILDPLATFORM node:24-alpine AS web
 WORKDIR /web
 COPY web/package.json web/package-lock.json ./
-RUN npm ci --no-audit --no-fund
+RUN --mount=type=cache,id=npm,target=/root/.npm npm ci --no-audit --no-fund
 COPY web/ ./
 RUN npx ng build --configuration production
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
 COPY src/ src/
-RUN dotnet publish src/Comptoir.Api/Comptoir.Api.csproj -c Release -o /out/api \
+RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
+    dotnet publish src/Comptoir.Api/Comptoir.Api.csproj -c Release -o /out/api \
  && dotnet publish src/Comptoir.Facade/Comptoir.Facade.csproj -c Release -o /out/facade
 
 # Chiseled runtime: no shell, non-root. "-extra" brings ICU: the facade and the API format French data.
