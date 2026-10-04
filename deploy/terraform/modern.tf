@@ -5,23 +5,6 @@ data "azurerm_container_app_environment" "this" {
   resource_group_name = var.existing_environment.resource_group
 }
 
-data "azurerm_container_registry" "this" {
-  name                = var.registry_name
-  resource_group_name = var.registry_resource_group
-}
-
-resource "azurerm_user_assigned_identity" "pull" {
-  name                = "${var.name}-pull"
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
-}
-
-resource "azurerm_role_assignment" "pull" {
-  scope                = data.azurerm_container_registry.this.id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_user_assigned_identity.pull.principal_id
-}
-
 # Shared by the facade (signs) and the API (validates): the browser never sees it.
 resource "random_password" "signing_key" {
   length  = 64
@@ -30,7 +13,7 @@ resource "random_password" "signing_key" {
 
 locals {
   modern   = var.image_tag == null ? 0 : 1
-  registry = data.azurerm_container_registry.this.login_server
+  registry = var.image_registry
 }
 
 resource "azurerm_container_app" "api" {
@@ -40,16 +23,6 @@ resource "azurerm_container_app" "api" {
   container_app_environment_id = data.azurerm_container_app_environment.this.id
   revision_mode                = "Single"
   workload_profile_name        = "Consumption"
-
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.pull.id]
-  }
-
-  registry {
-    server   = local.registry
-    identity = azurerm_user_assigned_identity.pull.id
-  }
 
   secret {
     name  = "database"
@@ -96,7 +69,6 @@ resource "azurerm_container_app" "api" {
     }
   }
 
-  depends_on = [azurerm_role_assignment.pull]
 }
 
 resource "azurerm_container_app" "facade" {
@@ -106,16 +78,6 @@ resource "azurerm_container_app" "facade" {
   container_app_environment_id = data.azurerm_container_app_environment.this.id
   revision_mode                = "Single"
   workload_profile_name        = "Consumption"
-
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.pull.id]
-  }
-
-  registry {
-    server   = local.registry
-    identity = azurerm_user_assigned_identity.pull.id
-  }
 
   secret {
     name  = "signing-key"
@@ -167,5 +129,4 @@ resource "azurerm_container_app" "facade" {
     }
   }
 
-  depends_on = [azurerm_role_assignment.pull]
 }

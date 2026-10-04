@@ -1,6 +1,4 @@
 subscription_id = "00000000-0000-0000-0000-000000000000"
 # operator_ip   = "203.0.113.10"   # to run the DbMigrator from your machine
-registry_name           = "myregistry"
-registry_resource_group = "rg-shared"
 existing_environment    = { name = "my-env", resource_group = "rg-shared" }
 # image_tag             = "…"   # set by deploy/azure.sh

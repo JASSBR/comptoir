@@ -19,13 +19,10 @@ variable "operator_ip" {
   description = "Public IP allowed to reach Azure SQL (to run the DbMigrator from a workstation). Null: none."
 }
 
-variable "registry_name" {
+variable "image_registry" {
   type        = string
-  description = "Existing Azure Container Registry holding the comptoir-api and comptoir-facade images."
-}
-
-variable "registry_resource_group" {
-  type = string
+  default     = "ghcr.io/jassbr"
+  description = "Public registry holding comptoir-api and comptoir-facade, built by .github/workflows/images.yml."
 }
 
 variable "existing_environment" {

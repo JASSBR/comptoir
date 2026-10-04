@@ -3,9 +3,9 @@ name: Images
 # Builds the two images of the new side (API, facade with the Angular app) on GitHub's amd64 runners and
 # publishes them to GitHub Container Registry, tagged with the commit. The legacy is deployed by azure.sh.
 on:
+  # Every commit on main gets its images (unchanged layers come from the cache), so any commit can be deployed.
   push:
     branches: [main]
-    paths: [src/**, web/**, Dockerfile, Directory.*.props, global.json, .github/workflows/images.yml]
   workflow_dispatch:
 
 permissions:
