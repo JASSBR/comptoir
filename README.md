@@ -27,6 +27,12 @@ differential tests and every switch backed by shadow traffic.
     <td align="center"><sub>New: an express quote the legacy could not do</sub></td>
     <td align="center"><sub>The 2014 screens, unchanged, now partly answered by .NET 10</sub></td>
   </tr>
+  <tr>
+    <td colspan="2"><img src="docs/images/login.png" alt="The migrated sign-in screen, the 2014 application still checking the password"></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><sub>Migrated: the sign-in screen, while the 2014 application still checks the password (ADR 0010)</sub></td>
+  </tr>
 </table>
 
 </div>
