@@ -3,5 +3,10 @@
 # Static files only, Vercel project "comptoir-wake". Usage: ./deploy/wake.sh   (requires `vercel login`)
 set -euo pipefail
 cd "$(dirname "$0")/wake"
-[ -d .vercel ] || vercel link --yes --project comptoir-wake
+if [ ! -d .vercel ]; then
+  vercel link --yes --project comptoir-wake
+  # Linking connects the repository: every push would then deploy the repository root, an empty site, as production.
+  vercel git disconnect --yes >/dev/null 2>&1 || true
+  rm -f .env.local
+fi
 vercel deploy --prod --yes
