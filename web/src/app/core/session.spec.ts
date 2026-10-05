@@ -103,4 +103,36 @@ describe('Session', () => {
     expect(assign).toHaveBeenCalledWith('/app/connexion?returnUrl=%2Fapp%2Fdevis');
     vi.unstubAllGlobals();
   });
+
+  it('learns it is signed out from a 401 on /api/session, without leaving the page', async () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', { pathname: '/app/migration', assign });
+    const session = TestBed.inject(Session);
+
+    const refresh = session.refresh();
+    http
+      .expectOne('/api/session')
+      .flush(
+        { message: 'Authorization has been denied for this request.' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
+    await refresh;
+
+    expect(session.signedIn()).toBe(false);
+    expect(assign).not.toHaveBeenCalled();
+  });
+
+  it('never redirects to the sign-in screen from the sign-in screen itself', () => {
+    const assign = vi.fn();
+    vi.stubGlobal('location', { pathname: '/app/connexion', assign });
+
+    TestBed.inject(HttpClient)
+      .get('/api/products')
+      .subscribe({ error: () => undefined });
+    http
+      .expectOne('/api/products')
+      .flush({ message: 'Session expirée' }, { status: 401, statusText: 'Unauthorized' });
+
+    expect(assign).not.toHaveBeenCalled();
+  });
 });
