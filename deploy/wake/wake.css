@@ -1,0 +1,191 @@
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/space-grotesk.woff2') format('woff2');
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+:root {
+  --charcoal: #15171b;
+  --on-charcoal: #f2f3f5;
+  --muted: rgb(242 243 245 / 62%);
+  --faint: rgb(242 243 245 / 14%);
+  --accent: #f0560a;
+  --new: #0f9f8f;
+  --display: 'Space Grotesk', system-ui, sans-serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(240 86 10 / 22%), transparent 60%),
+    radial-gradient(40rem 26rem at -10% 110%, rgb(15 159 143 / 16%), transparent 60%),
+    var(--charcoal);
+  color: var(--on-charcoal);
+  font: 16px/1.55 var(--body);
+}
+
+/* Hidden for the first moments: when the demo is already awake the visitor goes straight through, without a flash. */
+.card {
+  width: min(34rem, 100%);
+  opacity: 0;
+  animation: appear 0.5s ease-out 0.7s forwards;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.seal {
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 10px;
+  background: var(--accent);
+  font: 700 0.95rem var(--display);
+  letter-spacing: -0.04em;
+  box-shadow: 0 8px 20px -8px var(--accent);
+}
+.name {
+  display: grid;
+  line-height: 1.25;
+}
+.name strong {
+  font: 650 1.15rem var(--display);
+  letter-spacing: -0.03em;
+}
+.name small {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* The shop's roller shutter, its slats lifting one after another. */
+.shutter {
+  display: grid;
+  gap: 5px;
+  width: 7rem;
+  margin: 3rem 0 2rem;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--faint);
+}
+.shutter span {
+  height: 9px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #3b414c, #565d6a);
+  transform-origin: top;
+  animation: slat 2.4s ease-in-out infinite;
+}
+.shutter span:nth-child(2) { animation-delay: 0.12s; }
+.shutter span:nth-child(3) { animation-delay: 0.24s; }
+.shutter span:nth-child(4) { animation-delay: 0.36s; }
+.shutter span:nth-child(5) { animation-delay: 0.48s; }
+
+h1 {
+  margin: 0 0 0.75rem;
+  font: 650 clamp(1.8rem, 5vw, 2.4rem) / 1.1 var(--display);
+  letter-spacing: -0.035em;
+}
+.lede {
+  margin: 0 0 2rem;
+  color: var(--muted);
+}
+.lede strong {
+  color: var(--on-charcoal);
+  font-weight: 600;
+}
+
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--faint);
+  overflow: hidden;
+}
+.progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), #ff8a3d);
+  transition: width 0.6s ease-out;
+}
+.ready .progress span {
+  background: var(--new);
+}
+
+.steps {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+  font-size: 0.92rem;
+  color: rgb(242 243 245 / 40%);
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: color 0.3s;
+}
+.steps li::before {
+  content: '';
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+.steps li.active {
+  color: var(--on-charcoal);
+}
+.steps li.active::before {
+  border-color: var(--accent);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.steps li.done {
+  color: var(--muted);
+}
+.steps li.done::before {
+  background: var(--new);
+  border-color: var(--new);
+}
+
+.slow {
+  margin: 1.75rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.slow a {
+  color: var(--on-charcoal);
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slat {
+  0%, 15% { transform: scaleY(1); opacity: 1; }
+  50%, 65% { transform: scaleY(0.25); opacity: 0.35; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+@keyframes pulse {
+  50% { box-shadow: 0 0 0 4px rgb(240 86 10 / 25%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card { animation-duration: 0.01s; }
+  .shutter span, .steps li.active::before { animation: none; }
+}

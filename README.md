@@ -109,6 +109,10 @@ dotnet run --project src/Comptoir.AppHost     # facade + API + Angular, against 
 ./deploy/azure.sh                             # everything to Azure (Terraform)
 ```
 
+The demo scales to zero. `comptoir.jassbr.me` is a static waiting page on Vercel ([`deploy/wake`](deploy/wake),
+`./deploy/wake.sh`): it wakes the facade on `app.comptoir.jassbr.me` and forwards the visitor once it answers, instead
+of letting them meet the platform's bare error page during the ~30 s cold start.
+
 ## Quality gates
 
 | Gate | |
