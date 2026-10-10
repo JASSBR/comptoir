@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup Label="Aspire">
-    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.0" />
+    <PackageVersion Include="Aspire.Hosting.JavaScript" Version="13.6.1" />
     <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.6.0" />
   </ItemGroup>
   <ItemGroup Label="Service defaults">
