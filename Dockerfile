@@ -6,7 +6,7 @@
 
 # Both build stages run on the build machine's own architecture: their output is portable (static files,
 # framework-dependent DLLs), and under amd64 emulation on Apple Silicon the build took the better part of an hour.
-FROM --platform=$BUILDPLATFORM node:24-alpine AS web
+FROM --platform=$BUILDPLATFORM node:26-alpine AS web
 WORKDIR /web
 COPY web/package.json web/package-lock.json ./
 RUN --mount=type=cache,id=npm,target=/root/.npm npm ci --no-audit --no-fund
