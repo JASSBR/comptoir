@@ -23,7 +23,7 @@ jobs:
       E2E_BASE_URL: ${{ inputs.base_url || 'https://comptoir-facade.lemondune-f6dce829.italynorth.azurecontainerapps.io' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
