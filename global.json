@@ -7,6 +7,6 @@
     "runner": "Microsoft.Testing.Platform"
   },
   "msbuild-sdks": {
-    "MSBuild.SDK.SystemWeb": "4.0.104"
+    "MSBuild.SDK.SystemWeb": "4.0.107"
   }
 }
