@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="dbup-sqlserver" />
+    <PackageReference Include="Microsoft.Data.SqlClient" VersionOverride="7.1.2" />
   </ItemGroup>
   <ItemGroup>
     <!-- The legacy scripts stay where the legacy team keeps them; this tool only replays them, in order, once. -->
